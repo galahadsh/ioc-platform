@@ -1,0 +1,369 @@
+import os
+import time
+import requests
+import psycopg2
+from datetime import datetime
+
+
+VT_API_KEY = os.getenv("VT_API_KEY")
+
+
+DB = {
+    "host":"postgres",
+    "database":"cyberintel",
+    "user":"cyberintel",
+    "password":"SuperPassword123",
+    "port":5432
+}
+
+
+HEADERS = {
+    "x-apikey": VT_API_KEY
+}
+
+
+VT_URL="https://www.virustotal.com/api/v3"
+
+
+
+def conectar():
+
+    return psycopg2.connect(**DB)
+
+
+
+def vt_lookup(tipo,valor):
+
+    try:
+
+        if tipo=="ip":
+
+            url=f"{VT_URL}/ip_addresses/{valor}"
+
+
+        elif tipo=="domain":
+
+            url=f"{VT_URL}/domains/{valor}"
+
+
+        elif tipo in [
+            "md5",
+            "sha1",
+            "sha256"
+        ]:
+
+            url=f"{VT_URL}/files/{valor}"
+
+
+        else:
+
+            return None
+
+
+
+        r=requests.get(
+            url,
+            headers=HEADERS,
+            timeout=30
+        )
+
+
+        if r.status_code==404:
+
+            return {
+                "malicious":0,
+                "suspicious":0,
+                "harmless":0,
+                "undetected":0
+            }
+
+
+
+        if r.status_code!=200:
+
+            return None
+
+
+
+        attr=r.json()["data"]["attributes"]
+
+
+        stats=attr.get(
+            "last_analysis_stats",
+            {}
+        )
+
+
+        return {
+
+            "malicious":stats.get("malicious",0),
+            "suspicious":stats.get("suspicious",0),
+            "harmless":stats.get("harmless",0),
+            "undetected":stats.get("undetected",0)
+
+        }
+
+
+
+    except Exception as e:
+
+        print(e)
+        return None
+
+
+
+
+
+def actualizar_historial(cur,analysis_id):
+
+
+    cur.execute(
+        """
+
+        SELECT
+
+        COUNT(*) FILTER(
+            WHERE malicious > 0
+        ),
+
+        COUNT(*) FILTER(
+            WHERE suspicious > 0
+            AND malicious = 0
+        ),
+
+        COUNT(*) FILTER(
+            WHERE malicious = 0
+            AND suspicious = 0
+        ),
+
+        COUNT(*)
+
+
+        FROM iocs
+
+        WHERE analysis_id=%s
+
+
+        """,
+        (
+            analysis_id,
+        )
+    )
+
+
+    mal,susp,clean,total=cur.fetchone()
+
+
+
+    cur.execute(
+        """
+
+        UPDATE analysis
+
+        SET
+
+        analizados=%s,
+        maliciosos=%s,
+        sospechosos=%s,
+        limpios=%s
+
+        WHERE id=%s
+
+
+        """,
+        (
+            total,
+            mal,
+            susp,
+            clean,
+            analysis_id
+        )
+    )
+
+
+
+
+
+
+
+def procesar():
+
+
+    conn=conectar()
+
+    cur=conn.cursor()
+
+
+
+    cur.execute(
+        """
+
+        SELECT
+
+        id,
+        tipo,
+        valor,
+        analysis_id
+
+
+        FROM iocs
+
+
+        WHERE vt_estado='pendiente'
+
+
+        LIMIT 50
+
+
+        """
+    )
+
+
+
+    iocs=cur.fetchall()
+
+
+
+    print(
+        "Pendientes:",
+        len(iocs)
+    )
+
+
+
+    analisis=set()
+
+
+
+    for ioc_id,tipo,valor,analysis_id in iocs:
+
+
+        print(
+            "Consultando:",
+            valor
+        )
+
+
+        resultado=vt_lookup(
+            tipo,
+            valor
+        )
+
+
+
+        if resultado:
+
+
+            cur.execute(
+                """
+
+                UPDATE iocs
+
+                SET
+
+                malicious=%s,
+                suspicious=%s,
+                harmless=%s,
+                undetected=%s,
+
+                proveedor_reputacion='VirusTotal',
+
+                vt_estado='analizado',
+
+                ultima_consulta=%s
+
+
+                WHERE id=%s
+
+
+                """,
+                (
+                    resultado["malicious"],
+                    resultado["suspicious"],
+                    resultado["harmless"],
+                    resultado["undetected"],
+                    datetime.now(),
+                    ioc_id
+                )
+            )
+
+
+        else:
+
+
+            cur.execute(
+                """
+
+                UPDATE iocs
+
+                SET
+
+                vt_estado='error'
+
+
+                WHERE id=%s
+
+
+                """,
+                (
+                    ioc_id,
+                )
+            )
+
+
+
+        if analysis_id:
+
+            analisis.add(
+                analysis_id
+            )
+
+
+
+        time.sleep(16)
+
+
+
+    for a in analisis:
+
+        actualizar_historial(
+            cur,
+            a
+        )
+
+
+
+    conn.commit()
+
+    cur.close()
+
+    conn.close()
+
+
+
+
+
+print(
+    "IOC Collector iniciado"
+)
+
+
+
+while True:
+
+
+    try:
+
+        procesar()
+
+
+    except Exception as e:
+
+        print(
+            "ERROR",
+            e
+        )
+
+
+    time.sleep(300)
+

@@ -1,0 +1,200 @@
+services:
+
+  postgres:
+
+    image: postgres:16
+
+    container_name: ioc-postgres
+
+    restart: unless-stopped
+
+    environment:
+
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      POSTGRES_USER: ${POSTGRES_USER}
+
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+
+    volumes:
+
+      - postgres_data:/var/lib/postgresql/data
+
+
+    networks:
+
+      - ioc-network
+
+
+
+  api:
+
+    image: python:3.12
+
+    container_name: ioc-api
+
+    restart: unless-stopped
+
+    working_dir: /app
+
+
+    volumes:
+
+      - ./api:/app
+
+      - ./uploads:/uploads
+
+
+    environment:
+
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      POSTGRES_USER: ${POSTGRES_USER}
+
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+
+    ports:
+
+      - "8000:8000"
+
+
+    depends_on:
+
+      - postgres
+
+
+    command: >
+
+      bash -c "
+
+      pip install --no-cache-dir
+
+      fastapi
+
+      uvicorn
+
+      python-multipart
+
+      psycopg2-binary
+
+      sqlalchemy
+
+      pandas
+
+      openpyxl
+
+      jinja2 &&
+
+      uvicorn main:app --host 0.0.0.0 --port 8000
+
+      "
+
+
+    networks:
+
+      - ioc-network
+
+
+
+
+  collector:
+
+    image: python:3.12
+
+    container_name: ioc-collector
+
+    restart: unless-stopped
+
+
+    working_dir: /app
+
+
+    volumes:
+
+      - ./collector:/app
+
+
+    environment:
+
+      VT_API_KEY: ${VT_API_KEY}
+
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      POSTGRES_USER: ${POSTGRES_USER}
+
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+
+    depends_on:
+
+      - postgres
+
+
+    command: >
+
+      bash -c "
+
+      pip install --no-cache-dir
+
+      requests
+
+      psycopg2-binary
+
+      python-dotenv &&
+
+      python main.py
+
+      "
+
+
+    networks:
+
+      - ioc-network
+
+
+
+
+  nginx:
+
+    image: nginx:latest
+
+    container_name: ioc-nginx
+
+    restart: unless-stopped
+
+
+    ports:
+
+      - "80:80"
+
+
+    volumes:
+
+      - ./nginx:/etc/nginx/conf.d
+
+
+    depends_on:
+
+      - api
+
+
+    networks:
+
+      - ioc-network
+
+
+
+volumes:
+
+  postgres_data:
+
+
+
+networks:
+
+  ioc-network:
+
+    driver: bridge
+

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>IOC Platform</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+
+<body>
+
+
+<h1>IOC Platform</h1>
+
+
+<h2>Cargar IOC</h2>
+
+
+<div class="upload">
+
+
+<input 
+type="file" 
+id="archivo"
+accept=".csv"
+>
+
+
+<button onclick="subirArchivo()">
+Subir archivo
+</button>
+
+
+<p id="resultado"></p>
+
+
+</div>
+
+
+
+<div class="cards">
+
+
+<div class="card">
+<h3>Total IOC</h3>
+<p id="total">0</p>
+</div>
+
+
+<div class="card">
+<h3>Maliciosos</h3>
+<p id="maliciosos">0</p>
+</div>
+
+
+<div class="card">
+<h3>Sospechosos</h3>
+<p id="sospechosos">0</p>
+</div>
+
+
+<div class="card">
+<h3>Limpios</h3>
+<p id="limpios">0</p>
+</div>
+
+
+</div>
+
+
+
+<h2>IOC Maliciosos</h2>
+
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Tipo</th>
+<th>Valor</th>
+<th>Malicious</th>
+<th>Suspicious</th>
+<th>Proveedor</th>
+<th>Estado</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="tabla">
+
+</tbody>
+
+
+</table>
+
+
+
+<h2>Historial de análisis</h2>
+
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Archivo</th>
+<th>Estado</th>
+<th>Total</th>
+<th>Maliciosos</th>
+<th>Fecha</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="historial">
+
+</tbody>
+
+
+</table>
+
+
+
+<script src="/static/app.js"></script>
+
+
+</body>
+
+</html>

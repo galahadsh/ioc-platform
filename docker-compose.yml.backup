@@ -1,0 +1,122 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: ioc-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+    networks:
+      - ioc-network
+
+
+  adminer:
+    image: adminer
+    container_name: ioc-adminer
+    restart: unless-stopped
+
+    ports:
+      - "${ADMINER_PORT}:8080"
+
+    depends_on:
+      - postgres
+
+    networks:
+      - ioc-network
+
+
+  api:
+    image: python:3.12
+    container_name: ioc-api
+    restart: unless-stopped
+
+    working_dir: /app
+
+    volumes:
+      - ./api:/app
+      - ./collector:/collector
+      - ./exports:/exports
+      - ./logs:/logs
+      - ./data:/data
+
+    ports:
+      - "${API_PORT}:8000"
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      VT_API_KEY: ${VT_API_KEY}
+
+    depends_on:
+      - postgres
+
+    command: >
+      bash -c "
+      pip install --no-cache-dir -r requirements.txt &&
+      uvicorn main:app --host 0.0.0.0 --port 8000
+      "
+
+    networks:
+      - ioc-network
+
+
+  collector:
+    image: python:3.12
+    container_name: ioc-collector
+    restart: unless-stopped
+
+    working_dir: /app
+
+    volumes:
+      - ./collector:/app
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      VT_API_KEY: ${VT_API_KEY}
+
+    depends_on:
+      - postgres
+
+    command: >
+      bash -c "
+      pip install --no-cache-dir requests psycopg2-binary python-dotenv &&
+      python main.py
+      "
+
+    networks:
+      - ioc-network
+
+
+  scheduler:
+    image: python:3.12
+    container_name: ioc-scheduler
+    restart: unless-stopped
+
+    working_dir: /app
+
+    volumes:
+      - ./scheduler:/app
+
+    command: tail -f /dev/null
+
+    networks:
+      - ioc-network
+
+
+networks:
+
+  ioc-network:
+    driver: bridge
