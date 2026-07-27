@@ -50,10 +50,51 @@ def _build_filters(
         params["tipo"] = tipo.strip()
 
     if estado:
-        conditions.append(
-            "LOWER(vt_estado) = LOWER(:estado)"
-        )
-        params["estado"] = estado.strip()
+        estado_normalizado = estado.strip().lower()
+
+        if estado_normalizado in {"malicioso", "malicious"}:
+            conditions.append(
+                """
+                vt_estado = 'analizado'
+                AND COALESCE(vt_malicious, 0) > 0
+                """
+            )
+
+        elif estado_normalizado in {"sospechoso", "suspicious"}:
+            conditions.append(
+                """
+                vt_estado = 'analizado'
+                AND COALESCE(vt_malicious, 0) = 0
+                AND COALESCE(vt_suspicious, 0) > 0
+                """
+            )
+
+        elif estado_normalizado in {"limpio", "clean", "harmless"}:
+            conditions.append(
+                """
+                vt_estado = 'analizado'
+                AND COALESCE(vt_malicious, 0) = 0
+                AND COALESCE(vt_suspicious, 0) = 0
+                """
+            )
+
+        elif estado_normalizado in {"pendiente", "pending"}:
+            conditions.append(
+                """
+                COALESCE(vt_estado, 'pendiente') = 'pendiente'
+                """
+            )
+
+        elif estado_normalizado == "error":
+            conditions.append(
+                "vt_estado = 'error'"
+            )
+
+        else:
+            conditions.append(
+                "LOWER(vt_estado) = LOWER(:estado)"
+            )
+            params["estado"] = estado.strip()
 
     if fuente:
         conditions.append(
