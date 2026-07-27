@@ -1,201 +1,212 @@
 # IOC Platform
 
-> Plataforma de **Cyber Threat Intelligence (CTI)** para la gestión, enriquecimiento, análisis y exportación de Indicadores de Compromiso (IOC).
+Plataforma de Ciberinteligencia para la gestión, enriquecimiento y análisis de Indicadores de Compromiso (IOC).
+
+El proyecto está diseñado para evolucionar hacia una plataforma centralizada para equipos de:
+
+- Ciberinteligencia
+- Threat Hunting
+- Respuesta a Incidentes
+- Threat Intelligence
 
 ---
 
-# Descripción
+# Estado del proyecto
 
-IOC Platform es una plataforma desarrollada para centralizar el ciclo de vida de los IOC utilizados por equipos de:
-
-* Cyber Threat Intelligence (CTI)
-* Threat Hunting
-* Incident Response (IR)
-* Security Operations Center (SOC)
-
-El objetivo es evolucionar hacia una plataforma propia que permita consumir múltiples fuentes de inteligencia, enriquecer indicadores automáticamente, generar métricas y exportar IOC a herramientas de seguridad.
-
----
-
-# Estado del Proyecto
-
-**Versión**
+Versión actual
 
 ```
-v0.2.0-alpha
+v0.3.0-alpha
 ```
 
-Estado:
+Estado
 
-* En desarrollo activo
+- ✅ Backend modular
+- ✅ PostgreSQL
+- ✅ Collector VirusTotal
+- ✅ Dashboard inicial
+- ✅ API REST
+- ✅ Docker
+- ✅ Nginx
+- 🚧 IOC Explorer
+- ⏳ Threat Intelligence
+- ⏳ Threat Hunting
+- ⏳ Reportes
 
 ---
 
 # Arquitectura
 
-La aplicación sigue una arquitectura por capas para separar responsabilidades.
-
 ```
-Cliente
-    │
-    ▼
-Routes (FastAPI)
-    │
-    ▼
-Services
-    │
-    ▼
-Repositories
-    │
-    ▼
-PostgreSQL
+                    IOC Platform
+
+        +------------------------------+
+        |         Frontend             |
+        +--------------+---------------+
+                       |
+                       v
+                FastAPI REST API
+                       |
+      +----------------+----------------+
+      |                                 |
+      v                                 v
+   Services                      Collector
+      |                                 |
+      v                                 v
+Repositories                  VirusTotal API
+      |
+      v
+ PostgreSQL
 ```
 
-## ¿Qué hace cada capa?
-
-### Routes
-
-* Reciben las solicitudes HTTP.
-* Validan parámetros.
-* Devuelven respuestas.
-
-**No contienen SQL.**
-
 ---
 
-### Services
-
-Contienen la lógica de negocio.
-
-Ejemplos:
-
-* cálculo de estadísticas
-* validaciones
-* enriquecimiento
-* transformación de respuestas
-
----
-
-### Repositories
-
-Acceso a PostgreSQL.
-
-Toda consulta SQL debe vivir aquí.
-
----
-
-# Estructura del Proyecto
+# Estructura del proyecto
 
 ```
 ioc-platform/
-│
+
 ├── api/
-│   ├── config.py
-│   ├── database.py
-│   ├── main.py
-│   │
-│   ├── models/
-│   ├── repositories/
 │   ├── routes/
-│   ├── schemas/
 │   ├── services/
+│   ├── repositories/
+│   ├── models/
+│   ├── schemas/
 │   ├── static/
-│   └── utils/
+│   ├── uploads/
+│   └── main.py
 │
 ├── collector/
-├── dashboard/
+│   ├── clients/
+│   ├── repositories/
+│   ├── services/
+│   └── main.py
+│
 ├── database/
-├── exports/
-├── logs/
-├── nginx/
+│   ├── init.sql
+│   └── migrations/
+│
 ├── scheduler/
+│
+├── nginx/
+│
 ├── uploads/
 │
 ├── docker-compose.yml
-├── CHANGELOG.md
+│
 └── README.md
 ```
 
 ---
 
-# Tecnologías
+# Componentes
 
-* Python 3.12
-* FastAPI
-* SQLAlchemy
-* PostgreSQL 16
-* Docker Compose
-* Uvicorn
-* Nginx
-* Pandas
-* OpenPyXL
+## API
+
+FastAPI
+
+Funciones
+
+- Carga de IOC
+- Dashboard
+- Historial
+- Estadísticas
+- Health Check
+
+---
+
+## Collector
+
+Enriquece automáticamente los IOC utilizando VirusTotal.
+
+Actualmente obtiene:
+
+- Malicious
+- Suspicious
+- Harmless
+- Undetected
+- HTTP Status
+- Errores
+- Reintentos
 
 ---
 
-# Funcionalidades Implementadas
+## Base de datos
 
-## Gestión de IOC
+PostgreSQL 16
 
-* Importación de CSV
-* Detección automática de tipo IOC
-* Normalización de indicadores
+Tabla principal
 
-Tipos soportados:
+```
+iocs
+```
 
-* IPv4
-* URL
-* Dominio
-* MD5
-* SHA1
-* SHA256
+Optimizada con índices para:
+
+- Tipo
+- Estado
+- Fecha
+- Score
+- Última consulta
 
 ---
+
+# Docker
+
+Servicios
+
+| Servicio | Puerto |
+|----------|--------|
+| API | 8000 |
+| Nginx | 80 |
+| PostgreSQL | 5432 |
+| Adminer | 8080 |
+| Collector | Interno |
+| Scheduler | Interno |
+
+---
+
+# Variables de entorno
+
+Ejemplo
+
+```
+POSTGRES_DB=cyberintel
+POSTGRES_USER=cyberintel
+POSTGRES_PASSWORD=********
+
+VT_API_KEY=xxxxxxxxxxxxxxxx
+```
+
+Nunca subir el archivo `.env` al repositorio.
+
+---
+
+# Ejecutar
+
+Levantar todos los servicios
+
+```bash
+docker compose up -d
+```
+
+API
+
+```
+http://localhost:8000
+```
+
+Adminer
+
+```
+http://localhost:8080
+```
+
+---
+
+# API
 
 ## Dashboard
-
-Actualmente permite visualizar:
-
-* Total de IOC
-* IOC maliciosos
-* IOC limpios
-* IOC pendientes de análisis
-
----
-
-## Historial
-
-Registro de cargas realizadas.
-
----
-
-## Enriquecimiento
-
-Actualmente:
-
-* VirusTotal
-
-En desarrollo:
-
-* GreyNoise
-* AbuseIPDB
-* ThreatFox
-* URLHaus
-* AlienVault OTX
-* Intel471
-
----
-
-# API REST
-
-## Health
-
-```
-GET /health
-```
-
----
-
-## Estadísticas
 
 ```
 GET /api/stats
@@ -203,23 +214,15 @@ GET /api/stats
 
 ---
 
-## Historial
+## Health
 
 ```
-GET /api/analysis/history
-```
-
----
-
-## IOC maliciosos
-
-```
-GET /api/iocs/malicious
+GET /api/health
 ```
 
 ---
 
-## Carga de IOC
+## IOC
 
 ```
 POST /api/upload
@@ -227,214 +230,91 @@ POST /api/upload
 
 ---
 
-# Base de Datos
+# Migraciones
 
-Motor:
+Las migraciones se encuentran en:
 
 ```
-PostgreSQL 16
+database/migrations/
 ```
 
-Acceso mediante:
+Ejemplo
 
-* SQLAlchemy
+```
+002_vt_error_tracking.sql
 
-Actualmente se almacenan:
-
-* IOC
-* Tipo
-* Estado
-* Resultado VirusTotal
-* Fechas de análisis
-
----
-
-# Arquitectura de Desarrollo
-
-El proyecto sigue las siguientes reglas:
-
-## 1. Routes
-
-Nunca deben contener:
-
-* SQL
-* conexiones a PostgreSQL
-* lógica de negocio
-
----
-
-## 2. Services
-
-Contienen:
-
-* reglas de negocio
-* validaciones
-* procesamiento
-* transformación de respuestas
-
----
-
-## 3. Repositories
-
-Contienen únicamente:
-
-* consultas SQL
-* inserciones
-* actualizaciones
-* eliminaciones
+003_ioc_indexes.sql
+```
 
 ---
 
 # Roadmap
 
-## Fase 1 — Base
+## v0.3
 
-* [x] Docker Compose
-* [x] PostgreSQL
-* [x] FastAPI
-* [x] Dashboard inicial
-* [x] Importación CSV
-* [x] Enriquecimiento VirusTotal
+- Dashboard Profesional
+- IOC Explorer
 
 ---
 
-## Fase 2 — Refactor
+## v0.4
 
-* [x] Separación de rutas
-* [x] Configuración centralizada
-* [x] Base de datos centralizada
-* [x] Directorio utils
-* [x] Directorio services
-* [x] Directorio repositories
-* [x] Directorio models
-* [x] Directorio schemas
-* [x] Migración de `/api/stats` a arquitectura por capas
-
-Pendiente:
-
-* [ ] Migrar `/api/upload`
-* [ ] Migrar `/api/analysis/history`
-* [ ] Migrar `/api/iocs/malicious`
+- IOC Collections
 
 ---
 
-## Fase 3 — Backend Profesional
+## v0.5
 
-* [ ] SQLAlchemy ORM
-* [ ] Alembic
-* [ ] Pydantic Schemas
-* [ ] Repository Pattern completo
-* [ ] Service Layer completa
-* [ ] Logging estructurado
-* [ ] Manejo centralizado de errores
-* [ ] Variables mediante `.env`
-* [ ] Autenticación JWT
-* [ ] Control de usuarios
-* [ ] Tests unitarios
+- Threat Intelligence
 
 ---
 
-## Fase 4 — Threat Intelligence
+## v0.6
 
-Integración con:
-
-* [ ] VirusTotal
-* [ ] GreyNoise
-* [ ] AbuseIPDB
-* [ ] ThreatFox
-* [ ] URLHaus
-* [ ] AlienVault OTX
-* [ ] Intel471
+- Threat Hunting
 
 ---
 
-## Fase 5 — Dashboard
+## v0.7
 
-Visualizaciones:
-
-* [ ] IOC por país
-* [ ] IOC por ASN
-* [ ] IOC por malware
-* [ ] IOC por actor
-* [ ] IOC por campaña
-* [ ] IOC por familia
-* [ ] IOC por severidad
-* [ ] IOC por técnica MITRE
-* [ ] IOC por fuente
-* [ ] Tendencias
-* [ ] Evolución temporal
+- Integración con TheHive
 
 ---
 
-## Fase 6 — Exportadores
+## v0.8
 
-Exportación automática hacia:
-
-* [ ] FortiGate
-* [ ] Palo Alto
-* [ ] Microsoft Defender
-* [ ] Splunk
-* [ ] Elastic
-* [ ] TheHive
-* [ ] MISP
-* [ ] STIX/TAXII
+- Reportes Ejecutivos
 
 ---
 
-## Fase 7 — Automatización
+## v1.0
 
-* [ ] Scheduler
-* [ ] Reanálisis automático
-* [ ] Depuración automática
-* [ ] Enriquecimiento periódico
-* [ ] Alertas
-* [ ] Integración con correo
-* [ ] Integración con Teams
-* [ ] Integración con Slack
+Plataforma completa de Ciberinteligencia
 
----
-
-# Principios del Proyecto
-
-* Arquitectura modular.
-* Separación de responsabilidades.
-* Código reutilizable.
-* Escalable.
-* Fácil de probar.
-* Preparado para múltiples desarrolladores.
+- IOC Explorer
+- Threat Intelligence
+- Threat Hunting
+- Integración TheHive
+- Reportes
+- Dashboard Ejecutivo
+- Automatización
 
 ---
 
-# Convenciones
+# Tecnologías
 
-## Código
-
-* Un archivo = una responsabilidad.
-* Sin lógica de negocio en las rutas.
-* Sin SQL en las rutas.
-* Sin duplicar código.
-
----
-
-## Documentación
-
-Todo cambio importante debe actualizar:
-
-* `README.md`
-* `CHANGELOG.md`
-
-antes de considerarse finalizado.
+- FastAPI
+- PostgreSQL
+- Docker
+- Nginx
+- VirusTotal API
+- Python
+- JavaScript
+- HTML
+- CSS
 
 ---
 
-# Objetivo Final
+# Licencia
 
-Construir una plataforma integral de Cyber Threat Intelligence capaz de:
-
-* Centralizar IOC de múltiples fuentes.
-* Enriquecer indicadores automáticamente.
-* Relacionar IOC con malware, campañas y actores de amenaza.
-* Generar métricas y dashboards ejecutivos.
-* Integrarse con plataformas SIEM, SOAR y EDR.
-* Exportar IOC hacia firewalls, EDR, SIEM y herramientas de respuesta a incidentes.
-* Servir como plataforma de apoyo para los equipos de Ciberinteligencia, Threat Hunting e Incident Response.
+Proyecto interno de investigación y desarrollo.

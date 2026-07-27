@@ -1,23 +1,36 @@
-.env
-
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-uploads/
-exports/
+# Virtualenv
+venv/
+.venv/
+
+# Environment
+.env
+
+# Logs
 logs/
-
-.vscode/
-
 *.log
 
-*.sqlite
+# Uploads
+uploads/*
+!uploads/.gitkeep
 
+# Exports
+exports/*
+!exports/.gitkeep
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# macOS
+.DS_Store
+
+# Docker
 postgres/
-
-data/
-
-backups/
-
-*.bak
-*.backup
