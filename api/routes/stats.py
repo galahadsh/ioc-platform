@@ -1,11 +1,14 @@
 from fastapi import APIRouter
 
-from services.stats_service import get_dashboard_stats
+from services.stats_service import StatsService
 
 
-router = APIRouter(prefix="/api", tags=["Statistics"])
+router = APIRouter(
+    prefix="/api/stats",
+    tags=["stats"],
+)
 
 
-@router.get("/stats")
+@router.get("")
 def stats():
-    return get_dashboard_stats()
+    return StatsService.get_stats()

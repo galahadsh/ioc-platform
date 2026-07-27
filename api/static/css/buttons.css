@@ -1,33 +1,77 @@
-button{
+button {
+    min-height: 40px;
+    padding: 9px 18px;
 
-    background:var(--primary);
+    color: white;
+    background:
+        linear-gradient(
+            135deg,
+            #2f6fed,
+            #2563eb
+        );
 
-    color:white;
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    border-radius: 7px;
 
-    border:none;
+    cursor: pointer;
+    transition: var(--transition);
 
-    padding:12px 22px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    transition:var(--transition);
-
-    font-size:15px;
-
+    font-size: 13px;
+    font-weight: 600;
 }
 
-button:hover{
+button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #1d4ed8
+        );
 
-    background:#1d4ed8;
-
+    transform: translateY(-1px);
 }
 
-input[type=file]{
+.button-secondary {
+    color: var(--text-primary);
+    background: transparent;
+    border: 1px solid var(--border-light);
+}
 
-    margin-right:15px;
+.button-secondary:hover {
+    background: var(--surface-hover);
+}
 
-    color:white;
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
 
+input[type="file"] {
+    width: 100%;
+    margin-bottom: 10px;
+
+    color: var(--text-secondary);
+    background: #0a1727;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+input[type="file"]::file-selector-button {
+    min-height: 38px;
+    margin-right: 12px;
+    padding: 8px 13px;
+
+    color: var(--text-primary);
+    background: var(--surface-light);
+
+    border: 0;
+    border-right: 1px solid var(--border);
+
+    cursor: pointer;
+}
+
+#exportar-iocs {
+    min-width: 140px;
 }

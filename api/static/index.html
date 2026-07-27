@@ -2,13 +2,19 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>IOC Platform</title>
 
-    <link rel="stylesheet" href="/static/css/main.css">
-
+    <link
+        rel="stylesheet"
+        href="/static/css/main.css"
+    >
 </head>
 
 <body>
@@ -20,36 +26,40 @@
         <h2>IOC Platform</h2>
 
         <nav>
-
-            <a href="#">Dashboard</a>
-
-            <a href="#">IOC Explorer</a>
-
-            <a href="#">Analysis</a>
-
+            <a href="#dashboard">Dashboard</a>
+            <a href="#ioc-explorer">IOC Explorer</a>
+            <a href="#analysis-history">Analysis</a>
             <a href="#">Threat Intel</a>
-
             <a href="#">Threat Hunting</a>
-
+            <a href="#">Reports</a>
+            <a href="#">Integrations</a>
             <a href="#">Settings</a>
-
         </nav>
 
     </aside>
 
     <main class="content">
 
-        <header class="topbar">
+        <header
+            class="topbar"
+            id="dashboard"
+        >
 
             <h1>Dashboard</h1>
 
             <div class="status">
 
-                <span id="db-status">🟢 PostgreSQL</span>
+                <span id="db-status">
+                    🟢 PostgreSQL
+                </span>
 
-                <span id="collector-status">🟢 Collector</span>
+                <span id="collector-status">
+                    🟢 Collector
+                </span>
 
-                <span id="api-status">🟢 API</span>
+                <span id="api-status">
+                    🟢 API
+                </span>
 
             </div>
 
@@ -58,128 +68,428 @@
         <section class="cards">
 
             <div class="card">
-
                 <h3>Total IOC</h3>
-
                 <p id="total">0</p>
-
             </div>
 
             <div class="card">
-
                 <h3>Maliciosos</h3>
-
                 <p id="maliciosos">0</p>
-
             </div>
 
             <div class="card">
-
                 <h3>Sospechosos</h3>
-
                 <p id="sospechosos">0</p>
-
             </div>
 
             <div class="card">
-
                 <h3>Limpios</h3>
-
                 <p id="limpios">0</p>
-
             </div>
 
             <div class="card">
-
                 <h3>Pendientes</h3>
-
                 <p id="pendientes">0</p>
-
             </div>
 
             <div class="card">
-
                 <h3>Errores</h3>
-
                 <p id="errores">0</p>
+            </div>
+
+        </section>
+
+        <!-- Upload e IOC Explorer lado a lado -->
+        <div class="ioc-workspace">
+
+            <section class="panel">
+
+                <h2>Upload IOC CSV</h2>
+
+                <div class="upload-zone">
+                    <strong>
+                        Arrastra tu archivo CSV aquí
+                    </strong>
+
+                    <span>
+                        o selecciónalo manualmente
+                    </span>
+                </div>
+
+                <input
+                    type="file"
+                    id="archivo"
+                    accept=".csv,text/csv"
+                >
+
+                <button
+                    type="button"
+                    onclick="subirArchivo()"
+                    class="upload-button"
+                >
+                    Subir archivo
+                </button>
+
+                <p class="upload-help">
+                    Formato soportado: CSV
+                </p>
+
+                <div id="resultado"></div>
+
+            </section>
+
+            <section
+                class="panel"
+                id="ioc-explorer"
+            >
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>IOC Explorer</h2>
+
+                        <p class="panel-description">
+                            Consulta, filtra y exporta los
+                            indicadores almacenados en la
+                            plataforma.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="exportar-iocs"
+                        class="button-secondary"
+                    >
+                        Exportar CSV
+                    </button>
+
+                </div>
+
+                <div class="ioc-filters">
+
+                    <div class="filter-field">
+
+                        <label for="ioc-search">
+                            Buscar IOC
+                        </label>
+
+                        <input
+                            type="search"
+                            id="ioc-search"
+                            placeholder="IP, dominio, URL o hash"
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                    <div class="filter-field">
+
+                        <label for="ioc-tipo">
+                            Tipo
+                        </label>
+
+                        <select id="ioc-tipo">
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            <option value="ip">
+                                IP
+                            </option>
+
+                            <option value="domain">
+                                Dominio
+                            </option>
+
+                            <option value="url">
+                                URL
+                            </option>
+
+                            <option value="hash">
+                                Hash
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="filter-field">
+
+                        <label for="ioc-estado">
+                            Estado
+                        </label>
+
+                        <select id="ioc-estado">
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            <option value="malicious">
+                                Malicioso
+                            </option>
+
+                            <option value="suspicious">
+                                Sospechoso
+                            </option>
+
+                            <option value="clean">
+                                Limpio
+                            </option>
+
+                            <option value="pending">
+                                Pendiente
+                            </option>
+
+                            <option value="error">
+                                Error
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="filter-field">
+
+                        <label for="ioc-fuente">
+                            Fuente
+                        </label>
+
+                        <input
+                            type="text"
+                            id="ioc-fuente"
+                            placeholder="Ej. SOCradar"
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                    <div class="filter-field">
+
+                        <label for="ioc-date-from">
+                            Fecha inicial
+                        </label>
+
+                        <input
+                            type="date"
+                            id="ioc-date-from"
+                        >
+
+                    </div>
+
+                    <div class="filter-field">
+
+                        <label for="ioc-date-to">
+                            Fecha final
+                        </label>
+
+                        <input
+                            type="date"
+                            id="ioc-date-to"
+                        >
+
+                    </div>
+
+                    <div class="filter-field">
+
+                        <label for="ioc-page-size">
+                            Registros por página
+                        </label>
+
+                        <select id="ioc-page-size">
+
+                            <option value="10">
+                                10
+                            </option>
+
+                            <option
+                                value="25"
+                                selected
+                            >
+                                25
+                            </option>
+
+                            <option value="50">
+                                50
+                            </option>
+
+                            <option value="100">
+                                100
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="filter-actions">
+
+                        <button
+                            type="button"
+                            id="aplicar-filtros"
+                        >
+                            Aplicar filtros
+                        </button>
+
+                        <button
+                            type="button"
+                            id="limpiar-filtros"
+                            class="button-secondary"
+                        >
+                            Limpiar
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="ioc-error"
+                    class="table-message table-message-error"
+                    role="alert"
+                    hidden
+                ></div>
+
+            </section>
+
+        </div>
+
+        <!-- Tabla IOC separada para ocupar todo el ancho -->
+        <section class="panel">
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Tipo</th>
+                            <th>IOC</th>
+                            <th>Campaña</th>
+                            <th>Malware</th>
+                            <th>Estado</th>
+                            <th>Score</th>
+                            <th>Malicious</th>
+                            <th>Suspicious</th>
+                            <th>Fuente</th>
+                            <th>Última consulta</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tabla">
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="empty-state"
+                            >
+                                Cargando IOC...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="pagination">
+
+                <div id="ioc-pagination-info">
+                    Mostrando 0 registros
+                </div>
+
+                <div class="pagination-actions">
+
+                    <button
+                        type="button"
+                        id="pagina-anterior"
+                        class="button-secondary"
+                        disabled
+                    >
+                        Anterior
+                    </button>
+
+                    <span id="ioc-page-number">
+                        Página 1
+                    </span>
+
+                    <button
+                        type="button"
+                        id="pagina-siguiente"
+                        class="button-secondary"
+                        disabled
+                    >
+                        Siguiente
+                    </button>
+
+                </div>
 
             </div>
 
         </section>
 
-        <section class="panel">
+        <section
+            class="panel"
+            id="analysis-history"
+        >
 
-            <h2>Upload IOC CSV</h2>
+            <div class="panel-header">
 
-            <input type="file" id="archivo">
+                <div>
 
-            <button onclick="subirArchivo()">Subir</button>
+                    <h2>Historial de análisis</h2>
 
-            <div id="resultado"></div>
+                    <p class="panel-description">
+                        Seguimiento de archivos procesados y
+                        resultados obtenidos.
+                    </p>
 
-        </section>
+                </div>
 
-        <section class="panel">
+            </div>
 
-            <h2>IOC Maliciosos</h2>
+            <div class="table-wrapper">
 
-            <table>
+                <table>
 
-                <thead>
+                    <thead>
 
-                    <tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Archivo</th>
+                            <th>Estado</th>
+                            <th>IOC</th>
+                            <th>Maliciosos</th>
+                            <th>Fecha</th>
+                        </tr>
 
-                        <th>Tipo</th>
+                    </thead>
 
-                        <th>IOC</th>
+                    <tbody id="historial">
 
-                        <th>Malicious</th>
+                        <tr>
 
-                        <th>Suspicious</th>
+                            <td
+                                colspan="6"
+                                class="empty-state"
+                            >
+                                Cargando historial...
+                            </td>
 
-                        <th>Proveedor</th>
+                        </tr>
 
-                        <th>Estado</th>
+                    </tbody>
 
-                    </tr>
+                </table>
 
-                </thead>
-
-                <tbody id="tabla"></tbody>
-
-            </table>
-
-        </section>
-
-        <section class="panel">
-
-            <h2>Historial</h2>
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-
-                        <th>Archivo</th>
-
-                        <th>Estado</th>
-
-                        <th>IOC</th>
-
-                        <th>Maliciosos</th>
-
-                        <th>Fecha</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="historial"></tbody>
-
-            </table>
+            </div>
 
         </section>
 
@@ -187,7 +497,10 @@
 
 </div>
 
-<script type="module" src="/static/js/app.js"></script>
+<script
+    type="module"
+    src="/static/js/app.js"
+></script>
 
 </body>
 
