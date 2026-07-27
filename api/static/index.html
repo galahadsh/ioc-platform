@@ -1,140 +1,183 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
 
-<title>IOC Platform</title>
+    <meta charset="UTF-8">
+    <title>IOC Platform</title>
 
-<link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/css/main.css">
 
 </head>
 
-
 <body>
 
+<div class="layout">
 
-<h1>IOC Platform</h1>
+    <!-- Sidebar -->
 
+    <aside class="sidebar">
 
-<h2>Cargar IOC</h2>
+        <div class="logo">
+            <h2>IOC Platform</h2>
+        </div>
 
+        <nav>
 
-<div class="upload">
+            <a class="active">📊 Dashboard</a>
+            <a>🔍 IOC Explorer</a>
+            <a>🎯 Threat Hunting</a>
+            <a>🧠 Threat Intel</a>
+            <a>📄 Reportes</a>
+            <a>⚙ Configuración</a>
 
+        </nav>
 
-<input 
-type="file" 
-id="archivo"
-accept=".csv"
->
+    </aside>
 
+    <!-- Contenido -->
 
-<button onclick="subirArchivo()">
-Subir archivo
-</button>
+    <main class="content">
 
+        <header class="topbar">
 
-<p id="resultado"></p>
+            <div>
 
+                <h1>Dashboard</h1>
+                <p>IOC Platform</p>
+
+            </div>
+
+            <div class="collector">
+
+                🟢 Collector Running
+
+            </div>
+
+        </header>
+
+        <!-- Upload -->
+
+        <section class="panel">
+
+            <h2>Cargar IOC</h2>
+
+            <div class="upload">
+
+                <input
+                        type="file"
+                        id="archivo"
+                        accept=".csv">
+
+                <button onclick="subirArchivo()">
+
+                    Subir archivo
+
+                </button>
+
+                <p id="resultado"></p>
+
+            </div>
+
+        </section>
+
+        <!-- Cards -->
+
+        <section class="cards">
+
+            <div class="card">
+
+                <h3>Total IOC</h3>
+                <p id="total">0</p>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Maliciosos</h3>
+                <p id="maliciosos">0</p>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Sospechosos</h3>
+                <p id="sospechosos">0</p>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Limpios</h3>
+                <p id="limpios">0</p>
+
+            </div>
+
+        </section>
+
+        <!-- IOC -->
+
+        <section class="panel">
+
+            <h2>IOC Analizados</h2>
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Malicious</th>
+                    <th>Suspicious</th>
+                    <th>Proveedor</th>
+                    <th>Estado</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody id="tabla"></tbody>
+
+            </table>
+
+        </section>
+
+        <!-- Historial -->
+
+        <section class="panel">
+
+            <h2>Historial</h2>
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Archivo</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Maliciosos</th>
+                    <th>Fecha</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody id="historial"></tbody>
+
+            </table>
+
+        </section>
+
+    </main>
 
 </div>
 
-
-
-<div class="cards">
-
-
-<div class="card">
-<h3>Total IOC</h3>
-<p id="total">0</p>
-</div>
-
-
-<div class="card">
-<h3>Maliciosos</h3>
-<p id="maliciosos">0</p>
-</div>
-
-
-<div class="card">
-<h3>Sospechosos</h3>
-<p id="sospechosos">0</p>
-</div>
-
-
-<div class="card">
-<h3>Limpios</h3>
-<p id="limpios">0</p>
-</div>
-
-
-</div>
-
-
-
-<h2>IOC Maliciosos</h2>
-
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Tipo</th>
-<th>Valor</th>
-<th>Malicious</th>
-<th>Suspicious</th>
-<th>Proveedor</th>
-<th>Estado</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="tabla">
-
-</tbody>
-
-
-</table>
-
-
-
-<h2>Historial de análisis</h2>
-
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>ID</th>
-<th>Archivo</th>
-<th>Estado</th>
-<th>Total</th>
-<th>Maliciosos</th>
-<th>Fecha</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="historial">
-
-</tbody>
-
-
-</table>
-
-
-
-<script src="/static/app.js"></script>
-
+<script src="/static/js/app.js"></script>
 
 </body>
-
 </html>
