@@ -1,22 +1,23 @@
-# Variables de entorno
 .env
 
-# Base de datos
-postgres/
+__pycache__/
+*.pyc
 
-# Archivos generados
 uploads/
 exports/
 logs/
-backups/
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-
-# VS Code
 .vscode/
 
-# Docker
 *.log
+
+*.sqlite
+
+postgres/
+
+data/
+
+backups/
+
+*.bak
+*.backup
