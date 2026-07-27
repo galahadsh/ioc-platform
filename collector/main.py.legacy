@@ -16,36 +16,38 @@ from services.enrichment_service import process_ioc
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    format=(
+        "%(asctime)s "
+        "%(levelname)s "
+        "%(name)s "
+        "%(message)s"
+    ),
 )
 
 logger = logging.getLogger("ioc-collector")
 
 
 def process_batch() -> int:
-
     conn = get_connection()
 
     try:
-
-        pending_iocs = get_pending_iocs(
+        iocs = get_pending_iocs(
             conn=conn,
             limit=COLLECTOR_BATCH_SIZE,
             max_retries=VT_MAX_RETRIES,
         )
 
         logger.info(
-            "IOC pendientes encontrados: %s",
-            len(pending_iocs),
+            "IOC pendientes seleccionados: %s",
+            len(iocs),
         )
 
-        if not pending_iocs:
+        if not iocs:
             conn.rollback()
             return 0
 
-        vt_client = VirusTotalClient()
-
-        analyses = set()
+        client = VirusTotalClient()
+        analysis_ids: set[int] = set()
 
         for (
             ioc_id,
@@ -53,36 +55,32 @@ def process_batch() -> int:
             ioc_type,
             value,
             retry_count,
-        ) in pending_iocs:
-
+        ) in iocs:
             try:
-
                 process_ioc(
                     conn=conn,
-                    client=vt_client,
+                    client=client,
                     ioc_id=ioc_id,
                     ioc_type=ioc_type,
                     value=value,
                     retry_count=retry_count,
                 )
 
-                analyses.add(analysis_id)
+                analysis_ids.add(analysis_id)
 
+                # Guarda cada resultado individualmente.
                 conn.commit()
 
             except Exception:
-
                 conn.rollback()
 
                 logger.exception(
-                    "Error procesando IOC %s",
+                    "Error procesando IOC id=%s",
                     ioc_id,
                 )
 
-        for analysis_id in analyses:
-
+        for analysis_id in analysis_ids:
             try:
-
                 update_analysis(
                     conn=conn,
                     analysis_id=analysis_id,
@@ -91,54 +89,42 @@ def process_batch() -> int:
                 conn.commit()
 
             except Exception:
-
                 conn.rollback()
 
                 logger.exception(
-                    "Error actualizando analysis %s",
+                    "Error actualizando analysis id=%s",
                     analysis_id,
                 )
 
-        return len(pending_iocs)
+        return len(iocs)
 
     finally:
-
         conn.close()
 
 
-def main():
-
+def main() -> None:
     validate_config()
 
     logger.info(
-        "Collector iniciado"
-    )
-
-    logger.info(
-        "Batch=%s Interval=%ss",
+        "Collector iniciado batch_size=%s interval=%ss",
         COLLECTOR_BATCH_SIZE,
         COLLECTOR_INTERVAL,
     )
 
     while True:
-
         try:
-
             processed = process_batch()
 
             if processed == 0:
                 time.sleep(COLLECTOR_INTERVAL)
 
         except KeyboardInterrupt:
-
-            logger.info("Collector detenido")
-
+            logger.info("Collector detenido manualmente")
             break
 
         except Exception:
-
             logger.exception(
-                "Error general del collector"
+                "Error general en el ciclo del collector"
             )
 
             time.sleep(COLLECTOR_INTERVAL)

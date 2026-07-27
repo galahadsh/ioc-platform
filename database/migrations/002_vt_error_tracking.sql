@@ -1,0 +1,11 @@
+ALTER TABLE iocs
+ADD COLUMN IF NOT EXISTS vt_http_code integer;
+
+ALTER TABLE iocs
+ADD COLUMN IF NOT EXISTS vt_error text;
+
+ALTER TABLE iocs
+ADD COLUMN IF NOT EXISTS vt_retry_count integer NOT NULL DEFAULT 0;
+
+ALTER TABLE analysis
+ADD COLUMN IF NOT EXISTS errores integer NOT NULL DEFAULT 0;
