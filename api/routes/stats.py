@@ -12,3 +12,8 @@ router = APIRouter(
 @router.get("")
 def stats():
     return StatsService.get_stats()
+
+
+@router.get("/overview")
+def statistics_overview():
+    return StatsService.get_statistics()

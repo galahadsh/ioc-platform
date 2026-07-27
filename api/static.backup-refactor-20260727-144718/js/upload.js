@@ -34,4 +34,3 @@ export async function subirArchivo() {
     }
 
 }
-window.subirArchivo = subirArchivo;

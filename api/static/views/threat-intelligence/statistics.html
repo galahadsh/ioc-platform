@@ -1,0 +1,195 @@
+<section class="page-view statistics-section">
+
+    <header class="page-header statistics-heading">
+
+        <div>
+
+            <span class="section-eyebrow">
+                Threat Intelligence
+            </span>
+
+            <h1>IOC Statistics</h1>
+
+            <p class="panel-description">
+                Distribución, campañas, fuentes y familias de malware
+                relacionadas con los indicadores almacenados.
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            id="refresh-statistics"
+            class="button-secondary"
+        >
+            Actualizar
+        </button>
+
+    </header>
+
+    <div
+        id="statistics-error"
+        class="statistics-error"
+        role="alert"
+        hidden
+    ></div>
+
+    <div class="statistics-kpis">
+
+        <article class="statistics-kpi">
+            <span>Total IOC</span>
+            <strong id="statistics-total">0</strong>
+        </article>
+
+        <article class="statistics-kpi">
+            <span>Maliciosos</span>
+            <strong id="statistics-malicious">0</strong>
+        </article>
+
+        <article class="statistics-kpi">
+            <span>Sospechosos</span>
+            <strong id="statistics-suspicious">0</strong>
+        </article>
+
+        <article class="statistics-kpi">
+            <span>Limpios</span>
+            <strong id="statistics-clean">0</strong>
+        </article>
+
+        <article class="statistics-kpi">
+            <span>Pendientes</span>
+            <strong id="statistics-pending">0</strong>
+        </article>
+
+        <article class="statistics-kpi">
+            <span>Errores</span>
+            <strong id="statistics-errors">0</strong>
+        </article>
+
+    </div>
+
+    <div class="statistics-grid">
+
+        <article class="statistics-panel">
+
+            <div class="statistics-panel-header">
+                <h3>Reputación de IOC</h3>
+
+                <p>
+                    Clasificación obtenida durante el enriquecimiento.
+                </p>
+            </div>
+
+            <div id="statistics-reputation">
+
+                <div class="statistics-empty">
+                    Cargando reputación...
+                </div>
+
+            </div>
+
+        </article>
+
+        <article class="statistics-panel">
+
+            <div class="statistics-panel-header">
+                <h3>IOC por tipo</h3>
+
+                <p>
+                    IP, dominio, URL y hashes.
+                </p>
+            </div>
+
+            <div id="statistics-types">
+
+                <div class="statistics-empty">
+                    Cargando tipos...
+                </div>
+
+            </div>
+
+        </article>
+
+        <article class="statistics-panel">
+
+            <div class="statistics-panel-header">
+                <h3>Top fuentes</h3>
+
+                <p>
+                    Origen de los indicadores.
+                </p>
+            </div>
+
+            <div id="statistics-sources">
+
+                <div class="statistics-empty">
+                    Cargando fuentes...
+                </div>
+
+            </div>
+
+        </article>
+
+        <article class="statistics-panel">
+
+            <div class="statistics-panel-header">
+                <h3>Top campañas</h3>
+
+                <p>
+                    Campañas con mayor cantidad de IOC.
+                </p>
+            </div>
+
+            <div id="statistics-campaigns">
+
+                <div class="statistics-empty">
+                    Cargando campañas...
+                </div>
+
+            </div>
+
+        </article>
+
+        <article class="statistics-panel">
+
+            <div class="statistics-panel-header">
+                <h3>Familias de malware</h3>
+
+                <p>
+                    Malware relacionado con los IOC.
+                </p>
+            </div>
+
+            <div id="statistics-malware">
+
+                <div class="statistics-empty">
+                    Cargando familias...
+                </div>
+
+            </div>
+
+        </article>
+
+        <article class="statistics-panel statistics-wide">
+
+            <div class="statistics-panel-header">
+                <h3>Actividad mensual</h3>
+
+                <p>
+                    IOC consultados durante los últimos meses.
+                </p>
+            </div>
+
+            <div id="statistics-monthly">
+
+                <div class="statistics-empty">
+                    Cargando actividad...
+                </div>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
