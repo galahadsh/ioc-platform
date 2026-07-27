@@ -1,0 +1,45 @@
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+thead{
+
+    background:#1f2937;
+
+}
+
+th{
+
+    text-align:left;
+
+    padding:15px;
+
+    color:var(--text-secondary);
+
+    border-bottom:1px solid var(--border);
+
+}
+
+td{
+
+    padding:15px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+tbody tr{
+
+    transition:var(--transition);
+
+}
+
+tbody tr:hover{
+
+    background:var(--surface-light);
+
+}

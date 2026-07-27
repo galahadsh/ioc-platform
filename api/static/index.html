@@ -4,6 +4,7 @@
 <head>
 
     <meta charset="UTF-8">
+
     <title>IOC Platform</title>
 
     <link rel="stylesheet" href="/static/css/main.css">
@@ -12,82 +13,54 @@
 
 <body>
 
-<div class="layout">
-
-    <!-- Sidebar -->
+<div class="container">
 
     <aside class="sidebar">
 
-        <div class="logo">
-            <h2>IOC Platform</h2>
-        </div>
+        <h2>IOC Platform</h2>
 
         <nav>
 
-            <a class="active">📊 Dashboard</a>
-            <a>🔍 IOC Explorer</a>
-            <a>🎯 Threat Hunting</a>
-            <a>🧠 Threat Intel</a>
-            <a>📄 Reportes</a>
-            <a>⚙ Configuración</a>
+            <a href="#">Dashboard</a>
+
+            <a href="#">IOC Explorer</a>
+
+            <a href="#">Analysis</a>
+
+            <a href="#">Threat Intel</a>
+
+            <a href="#">Threat Hunting</a>
+
+            <a href="#">Settings</a>
 
         </nav>
 
     </aside>
 
-    <!-- Contenido -->
-
     <main class="content">
 
         <header class="topbar">
 
-            <div>
+            <h1>Dashboard</h1>
 
-                <h1>Dashboard</h1>
-                <p>IOC Platform</p>
+            <div class="status">
 
-            </div>
+                <span id="db-status">🟢 PostgreSQL</span>
 
-            <div class="collector">
+                <span id="collector-status">🟢 Collector</span>
 
-                🟢 Collector Running
+                <span id="api-status">🟢 API</span>
 
             </div>
 
         </header>
-
-        <!-- Upload -->
-
-        <section class="panel">
-
-            <h2>Cargar IOC</h2>
-
-            <div class="upload">
-
-                <input
-                        type="file"
-                        id="archivo"
-                        accept=".csv">
-
-                <button onclick="subirArchivo()">
-
-                    Subir archivo
-
-                </button>
-
-                <p id="resultado"></p>
-
-            </div>
-
-        </section>
-
-        <!-- Cards -->
 
         <section class="cards">
 
             <div class="card">
 
                 <h3>Total IOC</h3>
+
                 <p id="total">0</p>
 
             </div>
@@ -95,6 +68,7 @@
             <div class="card">
 
                 <h3>Maliciosos</h3>
+
                 <p id="maliciosos">0</p>
 
             </div>
@@ -102,6 +76,7 @@
             <div class="card">
 
                 <h3>Sospechosos</h3>
+
                 <p id="sospechosos">0</p>
 
             </div>
@@ -109,32 +84,64 @@
             <div class="card">
 
                 <h3>Limpios</h3>
+
                 <p id="limpios">0</p>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Pendientes</h3>
+
+                <p id="pendientes">0</p>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Errores</h3>
+
+                <p id="errores">0</p>
 
             </div>
 
         </section>
 
-        <!-- IOC -->
+        <section class="panel">
+
+            <h2>Upload IOC CSV</h2>
+
+            <input type="file" id="archivo">
+
+            <button onclick="subirArchivo()">Subir</button>
+
+            <div id="resultado"></div>
+
+        </section>
 
         <section class="panel">
 
-            <h2>IOC Analizados</h2>
+            <h2>IOC Maliciosos</h2>
 
             <table>
 
                 <thead>
 
-                <tr>
+                    <tr>
 
-                    <th>Tipo</th>
-                    <th>Valor</th>
-                    <th>Malicious</th>
-                    <th>Suspicious</th>
-                    <th>Proveedor</th>
-                    <th>Estado</th>
+                        <th>Tipo</th>
 
-                </tr>
+                        <th>IOC</th>
+
+                        <th>Malicious</th>
+
+                        <th>Suspicious</th>
+
+                        <th>Proveedor</th>
+
+                        <th>Estado</th>
+
+                    </tr>
 
                 </thead>
 
@@ -144,8 +151,6 @@
 
         </section>
 
-        <!-- Historial -->
-
         <section class="panel">
 
             <h2>Historial</h2>
@@ -154,16 +159,21 @@
 
                 <thead>
 
-                <tr>
+                    <tr>
 
-                    <th>ID</th>
-                    <th>Archivo</th>
-                    <th>Estado</th>
-                    <th>Total</th>
-                    <th>Maliciosos</th>
-                    <th>Fecha</th>
+                        <th>ID</th>
 
-                </tr>
+                        <th>Archivo</th>
+
+                        <th>Estado</th>
+
+                        <th>IOC</th>
+
+                        <th>Maliciosos</th>
+
+                        <th>Fecha</th>
+
+                    </tr>
 
                 </thead>
 
@@ -180,4 +190,5 @@
 <script type="module" src="/static/js/app.js"></script>
 
 </body>
+
 </html>

@@ -1,0 +1,42 @@
+:root{
+
+    --bg:#0f172a;
+    --surface:#1e293b;
+    --surface-light:#334155;
+
+    --primary:#2563eb;
+    --success:#22c55e;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+
+    --text:#f8fafc;
+    --text-secondary:#94a3b8;
+
+    --border:#334155;
+
+    --radius:14px;
+
+    --shadow:
+        0 10px 25px rgba(0,0,0,.35);
+
+    --transition:.25s;
+
+    --sidebar-width:250px;
+
+}
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+body{
+
+    background:var(--bg);
+    color:var(--text);
+    font-family:Segoe UI,Arial,sans-serif;
+
+}

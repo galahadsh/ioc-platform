@@ -1,0 +1,21 @@
+.panel{
+
+    background:var(--surface);
+
+    padding:25px;
+
+    margin-bottom:30px;
+
+    border-radius:var(--radius);
+
+    border:1px solid var(--border);
+
+    box-shadow:var(--shadow);
+
+}
+
+.panel h2{
+
+    margin-bottom:20px;
+
+}
