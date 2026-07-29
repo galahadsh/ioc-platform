@@ -23,6 +23,17 @@ function formatNumber(value) {
 }
 
 
+function calculatePercentage(value, total) {
+    const numericTotal = Number(total ?? 0);
+
+    if (numericTotal <= 0) {
+        return 0;
+    }
+
+    return (Number(value ?? 0) / numericTotal) * 100;
+}
+
+
 function setText(id, value) {
     const element = getElement(id);
 
@@ -32,56 +43,103 @@ function setText(id, value) {
 }
 
 
-function renderHorizontalBars(containerId, items) {
-    const container = getElement(containerId);
+function setPercentage(id, value) {
+    const element = getElement(id);
 
-    if (!container) {
-        return;
+    if (element) {
+        element.textContent = `${value.toFixed(1)}%`;
     }
+}
 
-    if (!Array.isArray(items) || items.length === 0) {
-        container.innerHTML = `
-            <div class="statistics-empty">
-                No hay información disponible.
-            </div>
-        `;
 
-        return;
-    }
+function setProgress(id, value) {
+    const element = getElement(id);
 
-    const maximum = Math.max(
-        ...items.map((item) => Number(item.total ?? 0)),
-        1
-    );
-
-    container.innerHTML = items.map((item) => {
-        const total = Number(item.total ?? 0);
-        const percentage = Math.max(
-            (total / maximum) * 100,
-            2
+    if (element) {
+        const percentage = Math.min(
+            Math.max(Number(value ?? 0), 0),
+            100
         );
 
-        return `
-            <div class="statistics-bar-item">
-                <div class="statistics-bar-header">
-                    <span>
-                        ${escapeHTML(item.label)}
-                    </span>
+        element.style.width = `${percentage}%`;
+    }
+}
 
-                    <strong>
-                        ${formatNumber(total)}
-                    </strong>
-                </div>
 
-                <div class="statistics-bar-track">
-                    <div
-                        class="statistics-bar-fill"
-                        style="width: ${percentage}%"
-                    ></div>
-                </div>
-            </div>
-        `;
-    }).join("");
+function updateSummary(summary) {
+    const total = Number(summary.total ?? 0);
+
+    const metrics = [
+        {
+            key: "malicious",
+            value: Number(summary.maliciosos ?? 0)
+        },
+        {
+            key: "suspicious",
+            value: Number(summary.sospechosos ?? 0)
+        },
+        {
+            key: "clean",
+            value: Number(summary.limpios ?? 0)
+        },
+        {
+            key: "pending",
+            value: Number(summary.pendientes ?? 0)
+        },
+        {
+            key: "errors",
+            value: Number(summary.errores ?? 0)
+        }
+    ];
+
+    setText("statistics-total", total);
+
+    for (const metric of metrics) {
+        const percentage = calculatePercentage(
+            metric.value,
+            total
+        );
+
+        setText(
+            `statistics-${metric.key}`,
+            metric.value
+        );
+
+        setPercentage(
+            `statistics-${metric.key}-percent`,
+            percentage
+        );
+
+        setProgress(
+            `statistics-${metric.key}-progress`,
+            percentage
+        );
+    }
+}
+
+
+function buildConicGradient(items, total) {
+    const safeTotal = Math.max(Number(total ?? 0), 1);
+    let accumulated = 0;
+
+    const segments = items.map((item) => {
+        const start = accumulated;
+        const amount = (
+            Number(item.total ?? 0) / safeTotal
+        ) * 100;
+
+        accumulated += amount;
+
+        return `${item.color} ${start}% ${accumulated}%`;
+    });
+
+    if (accumulated < 100) {
+        segments.push(
+            `#132b3f ${accumulated}% 100%`
+        );
+    }
+
+    return `conic-gradient(${segments.join(", ")})`;
 }
 
 
@@ -92,72 +150,214 @@ function renderReputation(summary) {
         return;
     }
 
+    const total = Number(summary.total ?? 0);
+
     const items = [
         {
             label: "Maliciosos",
-            total: summary.maliciosos ?? 0,
-            className: "malicious"
+            total: Number(summary.maliciosos ?? 0),
+            color: "#ff334f"
         },
         {
             label: "Sospechosos",
-            total: summary.sospechosos ?? 0,
-            className: "suspicious"
+            total: Number(summary.sospechosos ?? 0),
+            color: "#f5b800"
         },
         {
             label: "Limpios",
-            total: summary.limpios ?? 0,
-            className: "clean"
+            total: Number(summary.limpios ?? 0),
+            color: "#27df87"
         },
         {
             label: "Pendientes",
-            total: summary.pendientes ?? 0,
-            className: "pending"
+            total: Number(summary.pendientes ?? 0),
+            color: "#a855f7"
         },
         {
             label: "Errores",
-            total: summary.errores ?? 0,
-            className: "error"
+            total: Number(summary.errores ?? 0),
+            color: "#ff6a2a"
         }
     ];
 
-    const total = Math.max(
-        items.reduce(
-            (accumulator, item) =>
-                accumulator + Number(item.total),
-            0
+    const donutBackground = buildConicGradient(
+        items,
+        total
+    );
+
+    const legend = items.map((item) => {
+        const percentage = calculatePercentage(
+            item.total,
+            total
+        );
+
+        return `
+            <div class="ti-legend-item">
+                <span
+                    class="ti-legend-color"
+                    style="--legend-color: ${item.color}"
+                ></span>
+
+                <div class="ti-legend-data">
+                    <span>
+                        ${escapeHTML(item.label)}
+                    </span>
+
+                    <strong>
+                        ${formatNumber(item.total)}
+                        (${percentage.toFixed(1)}%)
+                    </strong>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    container.innerHTML = `
+        <div class="ti-reputation-layout">
+
+            <div
+                class="ti-donut"
+                style="--donut-background: ${donutBackground}"
+                role="img"
+                aria-label="Distribución de reputación de IOC"
+            >
+                <div class="ti-donut-center">
+                    <strong>${formatNumber(total)}</strong>
+                    <span>Total</span>
+                </div>
+            </div>
+
+            <div class="ti-legend">
+                ${legend}
+            </div>
+
+        </div>
+    `;
+}
+
+
+function renderTypeChart(items) {
+    const container = getElement("statistics-types");
+
+    if (!container) {
+        return;
+    }
+
+    if (!Array.isArray(items) || items.length === 0) {
+        container.innerHTML = `
+            <div class="ti-empty">
+                No hay información por tipo.
+            </div>
+        `;
+
+        return;
+    }
+
+    const maximum = Math.max(
+        ...items.map(
+            (item) => Number(item.total ?? 0)
         ),
         1
     );
 
     container.innerHTML = items.map((item) => {
-        const percentage = (
-            Number(item.total) / total
-        ) * 100;
+        const total = Number(item.total ?? 0);
+        const width = Math.max(
+            (total / maximum) * 100,
+            1
+        );
 
         return `
-            <div class="reputation-item">
-                <div class="reputation-label">
-                    <span
-                        class="reputation-dot ${item.className}"
-                    ></span>
+            <div class="ti-type-row">
+                <span
+                    class="ti-type-label"
+                    title="${escapeHTML(item.label)}"
+                >
+                    ${escapeHTML(item.label)}
+                </span>
 
-                    <span>
-                        ${escapeHTML(item.label)}
-                    </span>
+                <div class="ti-type-track">
+                    <div
+                        class="ti-type-fill"
+                        style="width: ${width}%"
+                    ></div>
                 </div>
 
-                <div class="reputation-value">
-                    <strong>
-                        ${formatNumber(item.total)}
-                    </strong>
-
-                    <span>
-                        ${percentage.toFixed(1)}%
-                    </span>
-                </div>
+                <strong class="ti-type-total">
+                    ${formatNumber(total)}
+                </strong>
             </div>
         `;
     }).join("");
+}
+
+
+function renderTable(
+    containerId,
+    items,
+    firstColumn
+) {
+    const container = getElement(containerId);
+
+    if (!container) {
+        return;
+    }
+
+    if (!Array.isArray(items) || items.length === 0) {
+        container.innerHTML = `
+            <div class="ti-empty">
+                No hay información disponible.
+            </div>
+        `;
+
+        return;
+    }
+
+    const rows = items.map((item) => `
+        <tr>
+            <td>${escapeHTML(item.label)}</td>
+            <td>${formatNumber(item.total)}</td>
+        </tr>
+    `).join("");
+
+    container.innerHTML = `
+        <table class="ti-data-table">
+            <thead>
+                <tr>
+                    <th>${escapeHTML(firstColumn)}</th>
+                    <th>IOC</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>
+    `;
+}
+
+
+function formatMonthLabel(value) {
+    const match = String(value ?? "")
+        .match(/^(\d{4})-(\d{2})$/);
+
+    if (!match) {
+        return String(value ?? "");
+    }
+
+    const date = new Date(
+        Number(match[1]),
+        Number(match[2]) - 1,
+        1
+    );
+
+    return new Intl.DateTimeFormat(
+        "es-MX",
+        {
+            month: "short",
+            year: "numeric"
+        }
+    ).format(date);
 }
 
 
@@ -170,7 +370,7 @@ function renderMonthlyActivity(items) {
 
     if (!Array.isArray(items) || items.length === 0) {
         container.innerHTML = `
-            <div class="statistics-empty">
+            <div class="ti-empty">
                 No hay actividad mensual registrada.
             </div>
         `;
@@ -179,38 +379,44 @@ function renderMonthlyActivity(items) {
     }
 
     const maximum = Math.max(
-        ...items.map((item) => Number(item.total ?? 0)),
+        ...items.map(
+            (item) => Number(item.total ?? 0)
+        ),
         1
     );
 
+    const columns = items.map((item) => {
+        const total = Number(item.total ?? 0);
+
+        const height = total > 0
+            ? Math.max((total / maximum) * 100, 2)
+            : 0;
+
+        return `
+            <div class="ti-month-column">
+                <strong class="ti-month-value">
+                    ${formatNumber(total)}
+                </strong>
+
+                <div class="ti-month-bar-space">
+                    <div
+                        class="ti-month-bar"
+                        style="height: ${height}%"
+                    ></div>
+                </div>
+
+                <span class="ti-month-label">
+                    ${escapeHTML(
+                        formatMonthLabel(item.label)
+                    )}
+                </span>
+            </div>
+        `;
+    }).join("");
+
     container.innerHTML = `
-        <div class="monthly-chart">
-            ${items.map((item) => {
-                const total = Number(item.total ?? 0);
-                const height = Math.max(
-                    (total / maximum) * 100,
-                    4
-                );
-
-                return `
-                    <div class="monthly-column">
-                        <div class="monthly-value">
-                            ${formatNumber(total)}
-                        </div>
-
-                        <div class="monthly-bar-wrapper">
-                            <div
-                                class="monthly-bar"
-                                style="height: ${height}%"
-                            ></div>
-                        </div>
-
-                        <div class="monthly-label">
-                            ${escapeHTML(item.label)}
-                        </div>
-                    </div>
-                `;
-            }).join("")}
+        <div class="ti-monthly-chart">
+            ${columns}
         </div>
     `;
 }
@@ -240,64 +446,85 @@ function hideStatisticsError() {
 }
 
 
-export async function cargarEstadisticas() {
-    try {
-        hideStatisticsError();
+function updateTimestamp() {
+    const element = getElement(
+        "statistics-updated-at"
+    );
 
+    if (!element) {
+        return;
+    }
+
+    element.textContent =
+        new Intl.DateTimeFormat(
+            "es-MX",
+            {
+                dateStyle: "medium",
+                timeStyle: "medium"
+            }
+        ).format(new Date());
+}
+
+
+function setLoading(isLoading) {
+    const button = getElement("refresh-statistics");
+
+    if (!button) {
+        return;
+    }
+
+    button.disabled = isLoading;
+
+    button.innerHTML = isLoading
+        ? "<span>↻</span> Actualizando…"
+        : "<span>↻</span> Actualizar";
+}
+
+
+export async function cargarEstadisticas() {
+    setLoading(true);
+    hideStatisticsError();
+
+    try {
         const data = await getStatisticsOverview();
         const summary = data.summary ?? {};
 
-        setText("statistics-total", summary.total);
-        setText(
-            "statistics-malicious",
-            summary.maliciosos
-        );
-        setText(
-            "statistics-suspicious",
-            summary.sospechosos
-        );
-        setText(
-            "statistics-clean",
-            summary.limpios
-        );
-        setText(
-            "statistics-pending",
-            summary.pendientes
-        );
-        setText(
-            "statistics-errors",
-            summary.errores
-        );
-
+        updateSummary(summary);
         renderReputation(summary);
+        renderTypeChart(data.by_type);
 
-        renderHorizontalBars(
-            "statistics-types",
-            data.by_type
-        );
-
-        renderHorizontalBars(
+        renderTable(
             "statistics-sources",
-            data.by_source
+            data.by_source,
+            "Fuente"
         );
 
-        renderHorizontalBars(
+        renderTable(
             "statistics-campaigns",
-            data.by_campaign
+            data.by_campaign,
+            "Campaña"
         );
 
-        renderHorizontalBars(
+        renderTable(
             "statistics-malware",
-            data.by_malware
+            data.by_malware,
+            "Familia"
         );
 
         renderMonthlyActivity(data.by_month);
+        updateTimestamp();
 
     } catch (error) {
-        console.error(error);
+        console.error(
+            "No fue posible cargar las estadísticas:",
+            error
+        );
 
         showStatisticsError(
-            "No fue posible cargar las estadísticas."
+            "No fue posible consultar las estadísticas. " +
+            "Verifica que /api/stats/overview esté disponible."
         );
+    } finally {
+        setLoading(false);
     }
 }

@@ -13,7 +13,7 @@ import {
 
 import {
     cargarEstadisticas
-} from "./statistics.js";
+} from "./statistics.js?v=20260729-5";
 
 
 function initializeDashboardView() {

@@ -1,195 +1,345 @@
-<section class="page-view statistics-section">
+<link
+    rel="stylesheet"
+    href="/static/css/statistics.css?v=20260729-4"
+>
 
-    <header class="page-header statistics-heading">
+<section class="ti-stats-page">
 
-        <div>
-
-            <span class="section-eyebrow">
+    <header class="ti-stats-header">
+        <div class="ti-stats-heading">
+            <span class="ti-stats-eyebrow">
                 Threat Intelligence
             </span>
 
             <h1>IOC Statistics</h1>
 
-            <p class="panel-description">
-                Distribución, campañas, fuentes y familias de malware
-                relacionadas con los indicadores almacenados.
+            <p>
+                Distribución, reputación, fuentes, campañas y familias
+                de malware relacionadas con los indicadores almacenados.
             </p>
-
         </div>
 
-        <button
-            type="button"
-            id="refresh-statistics"
-            class="button-secondary"
-        >
-            Actualizar
-        </button>
+        <div class="ti-update-card">
+            <div>
+                <span class="ti-update-label">
+                    Última actualización
+                </span>
 
+                <strong id="statistics-updated-at">
+                    Sin actualizar
+                </strong>
+            </div>
+
+            <button
+                id="refresh-statistics"
+                class="ti-refresh-button"
+                type="button"
+            >
+                <span aria-hidden="true">↻</span>
+                Actualizar
+            </button>
+        </div>
     </header>
 
     <div
         id="statistics-error"
-        class="statistics-error"
-        role="alert"
+        class="ti-stats-alert"
         hidden
     ></div>
 
-    <div class="statistics-kpis">
+    <section
+        class="ti-kpi-grid"
+        aria-label="Resumen de indicadores"
+    >
+        <article class="ti-kpi-card ti-kpi-total">
+            <div class="ti-kpi-icon">▰</div>
 
-        <article class="statistics-kpi">
-            <span>Total IOC</span>
-            <strong id="statistics-total">0</strong>
+            <span class="ti-kpi-label">Total IOC</span>
+
+            <strong
+                id="statistics-total"
+                class="ti-kpi-value"
+            >
+                0
+            </strong>
+
+            <span
+                id="statistics-total-percent"
+                class="ti-kpi-percent"
+            >
+                100% del total
+            </span>
+
+            <div class="ti-kpi-track">
+                <span style="width: 100%"></span>
+            </div>
         </article>
 
-        <article class="statistics-kpi">
-            <span>Maliciosos</span>
-            <strong id="statistics-malicious">0</strong>
+        <article class="ti-kpi-card ti-kpi-malicious">
+            <div class="ti-kpi-icon">☠</div>
+
+            <span class="ti-kpi-label">Maliciosos</span>
+
+            <strong
+                id="statistics-malicious"
+                class="ti-kpi-value"
+            >
+                0
+            </strong>
+
+            <span
+                id="statistics-malicious-percent"
+                class="ti-kpi-percent"
+            >
+                0.0%
+            </span>
+
+            <div class="ti-kpi-track">
+                <span id="statistics-malicious-progress"></span>
+            </div>
         </article>
 
-        <article class="statistics-kpi">
-            <span>Sospechosos</span>
-            <strong id="statistics-suspicious">0</strong>
+        <article class="ti-kpi-card ti-kpi-suspicious">
+            <div class="ti-kpi-icon">⚠</div>
+
+            <span class="ti-kpi-label">Sospechosos</span>
+
+            <strong
+                id="statistics-suspicious"
+                class="ti-kpi-value"
+            >
+                0
+            </strong>
+
+            <span
+                id="statistics-suspicious-percent"
+                class="ti-kpi-percent"
+            >
+                0.0%
+            </span>
+
+            <div class="ti-kpi-track">
+                <span id="statistics-suspicious-progress"></span>
+            </div>
         </article>
 
-        <article class="statistics-kpi">
-            <span>Limpios</span>
-            <strong id="statistics-clean">0</strong>
+        <article class="ti-kpi-card ti-kpi-clean">
+            <div class="ti-kpi-icon">✓</div>
+
+            <span class="ti-kpi-label">Limpios</span>
+
+            <strong
+                id="statistics-clean"
+                class="ti-kpi-value"
+            >
+                0
+            </strong>
+
+            <span
+                id="statistics-clean-percent"
+                class="ti-kpi-percent"
+            >
+                0.0%
+            </span>
+
+            <div class="ti-kpi-track">
+                <span id="statistics-clean-progress"></span>
+            </div>
         </article>
 
-        <article class="statistics-kpi">
-            <span>Pendientes</span>
-            <strong id="statistics-pending">0</strong>
+        <article class="ti-kpi-card ti-kpi-pending">
+            <div class="ti-kpi-icon">◷</div>
+
+            <span class="ti-kpi-label">Pendientes</span>
+
+            <strong
+                id="statistics-pending"
+                class="ti-kpi-value"
+            >
+                0
+            </strong>
+
+            <span
+                id="statistics-pending-percent"
+                class="ti-kpi-percent"
+            >
+                0.0%
+            </span>
+
+            <div class="ti-kpi-track">
+                <span id="statistics-pending-progress"></span>
+            </div>
         </article>
 
-        <article class="statistics-kpi">
-            <span>Errores</span>
-            <strong id="statistics-errors">0</strong>
+        <article class="ti-kpi-card ti-kpi-errors">
+            <div class="ti-kpi-icon">×</div>
+
+            <span class="ti-kpi-label">Errores</span>
+
+            <strong
+                id="statistics-errors"
+                class="ti-kpi-value"
+            >
+                0
+            </strong>
+
+            <span
+                id="statistics-errors-percent"
+                class="ti-kpi-percent"
+            >
+                0.0%
+            </span>
+
+            <div class="ti-kpi-track">
+                <span id="statistics-errors-progress"></span>
+            </div>
+        </article>
+    </section>
+
+    <section class="ti-main-grid">
+
+        <article class="ti-panel">
+            <header class="ti-panel-header">
+                <div>
+                    <h2>Reputación de IOC</h2>
+
+                    <p>
+                        Resultado del proceso de enriquecimiento.
+                    </p>
+                </div>
+
+                <span class="ti-panel-menu">⋮</span>
+            </header>
+
+            <div
+                id="statistics-reputation"
+                class="ti-reputation-content"
+            >
+                <div class="ti-loading">
+                    Cargando reputación…
+                </div>
+            </div>
         </article>
 
-    </div>
+        <article class="ti-panel">
+            <header class="ti-panel-header">
+                <div>
+                    <h2>IOC por tipo</h2>
 
-    <div class="statistics-grid">
+                    <p>
+                        IP, dominios, URLs y hashes.
+                    </p>
+                </div>
 
-        <article class="statistics-panel">
+                <span class="ti-panel-menu">⋮</span>
+            </header>
 
-            <div class="statistics-panel-header">
-                <h3>Reputación de IOC</h3>
+            <div
+                id="statistics-types"
+                class="ti-type-chart"
+            >
+                <div class="ti-loading">
+                    Cargando distribución…
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="ti-table-grid">
+
+        <article class="ti-panel ti-small-panel">
+            <header class="ti-panel-header">
+                <div>
+                    <h2>Top fuentes</h2>
+
+                    <p>Origen de los indicadores.</p>
+                </div>
+
+                <span class="ti-panel-menu">⋮</span>
+            </header>
+
+            <div
+                id="statistics-sources"
+                class="ti-table-container"
+            >
+                <div class="ti-loading">
+                    Cargando fuentes…
+                </div>
+            </div>
+        </article>
+
+        <article class="ti-panel ti-small-panel">
+            <header class="ti-panel-header">
+                <div>
+                    <h2>Top campañas</h2>
+
+                    <p>
+                        Campañas con mayor cantidad de IOC.
+                    </p>
+                </div>
+
+                <span class="ti-panel-menu">⋮</span>
+            </header>
+
+            <div
+                id="statistics-campaigns"
+                class="ti-table-container"
+            >
+                <div class="ti-loading">
+                    Cargando campañas…
+                </div>
+            </div>
+        </article>
+
+        <article class="ti-panel ti-small-panel">
+            <header class="ti-panel-header">
+                <div>
+                    <h2>Familias de malware</h2>
+
+                    <p>
+                        Malware relacionado con los IOC.
+                    </p>
+                </div>
+
+                <span class="ti-panel-menu">⋮</span>
+            </header>
+
+            <div
+                id="statistics-malware"
+                class="ti-table-container"
+            >
+                <div class="ti-loading">
+                    Cargando familias…
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="ti-panel ti-monthly-panel">
+        <header class="ti-panel-header">
+            <div>
+                <h2>Actividad mensual</h2>
 
                 <p>
-                    Clasificación obtenida durante el enriquecimiento.
+                    Evolución mensual de IOC registrados.
                 </p>
             </div>
 
-            <div id="statistics-reputation">
+            <span class="ti-panel-menu">⋮</span>
+        </header>
 
-                <div class="statistics-empty">
-                    Cargando reputación...
-                </div>
-
+        <div
+            id="statistics-monthly"
+            class="ti-monthly-content"
+        >
+            <div class="ti-loading">
+                Cargando actividad…
             </div>
+        </div>
+    </section>
 
-        </article>
-
-        <article class="statistics-panel">
-
-            <div class="statistics-panel-header">
-                <h3>IOC por tipo</h3>
-
-                <p>
-                    IP, dominio, URL y hashes.
-                </p>
-            </div>
-
-            <div id="statistics-types">
-
-                <div class="statistics-empty">
-                    Cargando tipos...
-                </div>
-
-            </div>
-
-        </article>
-
-        <article class="statistics-panel">
-
-            <div class="statistics-panel-header">
-                <h3>Top fuentes</h3>
-
-                <p>
-                    Origen de los indicadores.
-                </p>
-            </div>
-
-            <div id="statistics-sources">
-
-                <div class="statistics-empty">
-                    Cargando fuentes...
-                </div>
-
-            </div>
-
-        </article>
-
-        <article class="statistics-panel">
-
-            <div class="statistics-panel-header">
-                <h3>Top campañas</h3>
-
-                <p>
-                    Campañas con mayor cantidad de IOC.
-                </p>
-            </div>
-
-            <div id="statistics-campaigns">
-
-                <div class="statistics-empty">
-                    Cargando campañas...
-                </div>
-
-            </div>
-
-        </article>
-
-        <article class="statistics-panel">
-
-            <div class="statistics-panel-header">
-                <h3>Familias de malware</h3>
-
-                <p>
-                    Malware relacionado con los IOC.
-                </p>
-            </div>
-
-            <div id="statistics-malware">
-
-                <div class="statistics-empty">
-                    Cargando familias...
-                </div>
-
-            </div>
-
-        </article>
-
-        <article class="statistics-panel statistics-wide">
-
-            <div class="statistics-panel-header">
-                <h3>Actividad mensual</h3>
-
-                <p>
-                    IOC consultados durante los últimos meses.
-                </p>
-            </div>
-
-            <div id="statistics-monthly">
-
-                <div class="statistics-empty">
-                    Cargando actividad...
-                </div>
-
-            </div>
-
-        </article>
-
-    </div>
+    <footer class="ti-stats-footer">
+        Los datos se actualizan automáticamente al abrir esta vista.
+    </footer>
 
 </section>
