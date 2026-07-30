@@ -13,15 +13,30 @@ export async function uploadIOC(formData) {
 
 
 export async function getStats() {
-    const response = await fetch("/api/stats");
+    const response = await fetch(
+        "/api/v2/iocs/dashboard",
+        {
+            cache: "no-store"
+        }
+    );
 
     if (!response.ok) {
         throw new Error(
-            "Error obteniendo estadísticas."
+            `Error obteniendo estadísticas: HTTP ${response.status}`
         );
     }
 
-    return await response.json();
+    const data = await response.json();
+
+    return {
+        total: data.total_iocs ?? 0,
+        maliciosos: data.malicious ?? 0,
+        sospechosos: data.suspicious ?? 0,
+        limpios: data.harmless ?? 0,
+        pendientes: data.undetected ?? 0,
+        analizados: data.analizado ?? 0,
+        errores: data.errores ?? 0
+    };
 }
 
 

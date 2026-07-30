@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-
+from routes.iocs_orm import router as iocs_orm_router
 from config import STATIC_DIR
 from routes import analysis, health, iocs, stats, upload
 
@@ -29,3 +29,4 @@ app.include_router(stats.router)
 app.include_router(upload.router)
 app.include_router(iocs.router)
 app.include_router(analysis.router)
+app.include_router(iocs_orm_router)
