@@ -1,131 +1,468 @@
-<section class="page-view">
+<link
+    rel="stylesheet"
+    href="/static/css/executive-dashboard.css?v=20260731-2"
+>
 
-    <header class="topbar">
+<section class="ed-page">
 
+    <header class="ed-header">
         <div>
-            <span class="section-eyebrow">
+            <span class="ed-eyebrow">
                 IOC Platform
             </span>
 
             <h1>Dashboard</h1>
 
-            <p class="panel-description">
-                Estado general y actividad operativa de la plataforma.
+            <p>
+                Resumen general de inteligencia, enriquecimiento
+                y actividad operativa de la plataforma.
             </p>
         </div>
 
-        <div class="status">
+        <div class="ed-header-tools">
+            <div class="ed-service-summary">
+                <span>
+                    <i class="ed-live-dot"></i>
+                    PostgreSQL
+                </span>
 
-            <span id="db-status">
-                🟢 PostgreSQL
-            </span>
+                <span>
+                    <i class="ed-live-dot"></i>
+                    Collector
+                </span>
 
-            <span id="collector-status">
-                🟢 Collector
-            </span>
+                <span>
+                    <i class="ed-live-dot"></i>
+                    API
+                </span>
+            </div>
 
-            <span id="api-status">
-                🟢 API
-            </span>
-
+            <button
+                id="ed-refresh"
+                type="button"
+                class="ed-refresh-button"
+            >
+                <span>↻</span>
+                Actualizar
+            </button>
         </div>
-
     </header>
 
-    <section class="cards">
+    <div
+        id="ed-error"
+        class="ed-error"
+        hidden
+    ></div>
 
-        <div class="card">
-            <h3>Total IOC</h3>
-            <p id="total">0</p>
-        </div>
+    <section class="ed-kpi-grid">
 
-        <div class="card">
-            <h3>Maliciosos</h3>
-            <p id="maliciosos">0</p>
-        </div>
+        <article class="ed-kpi ed-kpi-total">
+            <div class="ed-kpi-top">
+                <div class="ed-kpi-icon">◆</div>
 
-        <div class="card">
-            <h3>Sospechosos</h3>
-            <p id="sospechosos">0</p>
-        </div>
+                <span>Total IOC</span>
+            </div>
 
-        <div class="card">
-            <h3>Limpios</h3>
-            <p id="limpios">0</p>
-        </div>
+            <strong id="ed-total">0</strong>
 
-        <div class="card">
-            <h3>Pendientes</h3>
-            <p id="pendientes">0</p>
-        </div>
+            <small>
+                Indicadores almacenados
+            </small>
 
-        <div class="card">
-            <h3>Errores</h3>
-            <p id="errores">0</p>
-        </div>
+            <div class="ed-sparkline">
+                <svg
+                    viewBox="0 0 220 46"
+                    preserveAspectRatio="none"
+                >
+                    <polyline
+                        points="0,38 25,35 45,37 65,25 90,29 110,20 135,27 155,18 175,26 195,14 220,22"
+                    />
+                </svg>
+            </div>
+        </article>
+
+        <article class="ed-kpi ed-kpi-malicious">
+            <div class="ed-kpi-top">
+                <div class="ed-kpi-icon">☠</div>
+
+                <span>Maliciosos</span>
+            </div>
+
+            <strong id="ed-malicious">0</strong>
+
+            <small id="ed-malicious-percent">
+                0% del total
+            </small>
+
+            <div class="ed-sparkline">
+                <svg
+                    viewBox="0 0 220 46"
+                    preserveAspectRatio="none"
+                >
+                    <polyline
+                        points="0,39 25,32 45,35 65,24 90,29 115,20 135,22 155,13 180,21 200,10 220,18"
+                    />
+                </svg>
+            </div>
+        </article>
+
+        <article class="ed-kpi ed-kpi-suspicious">
+            <div class="ed-kpi-top">
+                <div class="ed-kpi-icon">!</div>
+
+                <span>Sospechosos</span>
+            </div>
+
+            <strong id="ed-suspicious">0</strong>
+
+            <small id="ed-suspicious-percent">
+                0% del total
+            </small>
+
+            <div class="ed-sparkline">
+                <svg
+                    viewBox="0 0 220 46"
+                    preserveAspectRatio="none"
+                >
+                    <polyline
+                        points="0,39 35,39 65,37 95,38 125,34 150,29 175,20 200,19 220,18"
+                    />
+                </svg>
+            </div>
+        </article>
+
+        <article class="ed-kpi ed-kpi-clean">
+            <div class="ed-kpi-top">
+                <div class="ed-kpi-icon">✓</div>
+
+                <span>Limpios</span>
+            </div>
+
+            <strong id="ed-clean">0</strong>
+
+            <small id="ed-clean-percent">
+                0% del total
+            </small>
+
+            <div class="ed-sparkline">
+                <svg
+                    viewBox="0 0 220 46"
+                    preserveAspectRatio="none"
+                >
+                    <polyline
+                        points="0,38 20,36 40,29 65,34 85,23 105,30 130,18 150,32 175,23 200,35 220,19"
+                    />
+                </svg>
+            </div>
+        </article>
+
+        <article class="ed-kpi ed-kpi-pending">
+            <div class="ed-kpi-top">
+                <div class="ed-kpi-icon">◷</div>
+
+                <span>Pendientes</span>
+            </div>
+
+            <strong id="ed-pending">0</strong>
+
+            <small id="ed-pending-percent">
+                0% del total
+            </small>
+
+            <div class="ed-sparkline">
+                <svg
+                    viewBox="0 0 220 46"
+                    preserveAspectRatio="none"
+                >
+                    <polyline
+                        points="0,39 35,39 65,39 95,38 125,38 150,32 175,34 200,24 220,25"
+                    />
+                </svg>
+            </div>
+        </article>
+
+        <article class="ed-kpi ed-kpi-errors">
+            <div class="ed-kpi-top">
+                <div class="ed-kpi-icon">×</div>
+
+                <span>Errores</span>
+            </div>
+
+            <strong id="ed-errors">0</strong>
+
+            <small id="ed-errors-percent">
+                0% del total
+            </small>
+
+            <div class="ed-sparkline">
+                <svg
+                    viewBox="0 0 220 46"
+                    preserveAspectRatio="none"
+                >
+                    <polyline
+                        points="0,37 25,31 45,34 70,29 95,35 120,25 145,31 170,22 195,29 220,20"
+                    />
+                </svg>
+            </div>
+        </article>
 
     </section>
 
-    <section class="dashboard-grid">
+    <section class="ed-primary-grid">
 
-        <article class="panel">
-
-            <div class="panel-header">
-
+        <article class="ed-panel">
+            <header class="ed-panel-header">
                 <div>
-                    <h2>Servicios</h2>
-
-                    <p class="panel-description">
-                        Estado de los componentes principales.
-                    </p>
+                    <h2>Distribución por tipo</h2>
+                    <p>Clasificación técnica de los IOC.</p>
                 </div>
 
+                <span class="ed-panel-menu">⋮</span>
+            </header>
+
+            <div
+                id="ed-type-distribution"
+                class="ed-donut-layout"
+            >
+                <div class="ed-loading">
+                    Cargando distribución…
+                </div>
             </div>
-
-            <div class="service-status-list">
-
-                <div class="service-status-item">
-                    <span>PostgreSQL</span>
-                    <strong>Operativo</strong>
-                </div>
-
-                <div class="service-status-item">
-                    <span>API</span>
-                    <strong>Operativa</strong>
-                </div>
-
-                <div class="service-status-item">
-                    <span>Collector</span>
-                    <strong>Operativo</strong>
-                </div>
-
-                <div class="service-status-item">
-                    <span>VirusTotal</span>
-                    <strong>Configurado</strong>
-                </div>
-
-            </div>
-
         </article>
 
-        <article class="panel">
+        <article class="ed-panel">
+            <header class="ed-panel-header">
+                <div>
+                    <h2>Tendencia de IOC</h2>
+                    <p>Volumen mensual registrado.</p>
+                </div>
 
-            <div class="panel-header">
+                <span class="ed-panel-menu">⋮</span>
+            </header>
 
+            <div
+                id="ed-trend"
+                class="ed-trend"
+            >
+                <div class="ed-loading">
+                    Cargando tendencia…
+                </div>
+            </div>
+        </article>
+
+        <article class="ed-panel">
+            <header class="ed-panel-header">
+                <div>
+                    <h2>Top fuentes</h2>
+                    <p>Principales orígenes de inteligencia.</p>
+                </div>
+
+                <span class="ed-panel-menu">⋮</span>
+            </header>
+
+            <div
+                id="ed-sources"
+                class="ed-source-list"
+            >
+                <div class="ed-loading">
+                    Cargando fuentes…
+                </div>
+            </div>
+        </article>
+
+    </section>
+
+    <section class="ed-secondary-grid">
+
+        <article class="ed-panel">
+            <header class="ed-panel-header">
                 <div>
                     <h2>Actividad reciente</h2>
+                    <p>Últimos análisis y cargas.</p>
+                </div>
 
-                    <p class="panel-description">
-                        Resumen de las tareas recientes.
+                <span class="ed-panel-menu">⋮</span>
+            </header>
+
+            <div
+                id="ed-activity"
+                class="ed-activity-list"
+            >
+                <div class="ed-loading">
+                    Cargando actividad…
+                </div>
+            </div>
+        </article>
+
+        <article class="ed-panel ed-map-panel">
+            <header class="ed-panel-header">
+                <div>
+                    <h2>Mapa de amenazas</h2>
+                    <p>
+                        Distribución geográfica de los IOC enriquecidos.
                     </p>
                 </div>
 
+                <span class="ed-panel-menu">⋮</span>
+            </header>
+
+            <div id="ed-threat-map" class="ed-threat-map">
+                <div class="ed-map-placeholder">
+                    <div class="ed-map-glow"></div>
+
+                    <svg
+                        viewBox="0 0 1000 500"
+                        role="img"
+                        aria-label="Mapa mundial de amenazas"
+                    >
+                        <path class="ed-map-land" d="M80,170 L145,125 L210,132 L248,170 L223,208 L170,216 L128,196 Z"/>
+                        <path class="ed-map-land" d="M235,245 L285,255 L310,315 L282,405 L245,365 L220,290 Z"/>
+                        <path class="ed-map-land" d="M410,145 L470,120 L540,132 L570,165 L535,190 L485,182 L452,200 L420,178 Z"/>
+                        <path class="ed-map-land" d="M470,210 L525,218 L555,275 L535,365 L495,385 L462,330 L450,255 Z"/>
+                        <path class="ed-map-land" d="M560,135 L650,100 L765,115 L850,155 L835,205 L760,215 L700,190 L640,220 L580,185 Z"/>
+                        <path class="ed-map-land" d="M790,320 L845,305 L890,335 L872,375 L818,380 Z"/>
+
+                        <circle class="ed-map-hotspot level-5" cx="195" cy="185" r="18"/>
+                        <circle class="ed-map-hotspot level-3" cx="265" cy="305" r="13"/>
+                        <circle class="ed-map-hotspot level-4" cx="505" cy="165" r="16"/>
+                        <circle class="ed-map-hotspot level-5" cx="705" cy="155" r="20"/>
+                        <circle class="ed-map-hotspot level-2" cx="820" cy="340" r="10"/>
+                    </svg>
+
+                    <div class="ed-map-overlay">
+                        <strong>Datos geográficos pendientes</strong>
+                        <span>
+                            El mapa se activará con información real de país.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ed-map-legend">
+                    <span><i class="level-1"></i> 1–10</span>
+                    <span><i class="level-2"></i> 11–50</span>
+                    <span><i class="level-3"></i> 51–100</span>
+                    <span><i class="level-4"></i> 101–250</span>
+                    <span><i class="level-5"></i> 250+</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="ed-panel">
+            <header class="ed-panel-header">
+                <div>
+                    <h2>Estado de servicios</h2>
+                    <p>Componentes principales.</p>
+                </div>
+
+                <span class="ed-panel-menu">⋮</span>
+            </header>
+
+            <div class="ed-services">
+                <div class="ed-service-row">
+                    <span>◉ PostgreSQL</span>
+                    <strong>
+                        <i class="ed-live-dot"></i>
+                        Operativo
+                    </strong>
+                </div>
+
+                <div class="ed-service-row">
+                    <span>◈ Collector</span>
+                    <strong>
+                        <i class="ed-live-dot"></i>
+                        Operativo
+                    </strong>
+                </div>
+
+                <div class="ed-service-row">
+                    <span>⬡ API</span>
+                    <strong>
+                        <i class="ed-live-dot"></i>
+                        Operativo
+                    </strong>
+                </div>
+
+                <div class="ed-service-row">
+                    <span>◇ VirusTotal API</span>
+                    <strong>
+                        <i class="ed-live-dot"></i>
+                        Configurado
+                    </strong>
+                </div>
+            </div>
+        </article>
+
+    </section>
+
+    <section class="ed-footer-grid">
+
+        <article class="ed-footer-metric">
+            <span>IOC analizados</span>
+
+            <strong id="ed-analyzed">0</strong>
+
+            <div class="ed-progress">
+                <span id="ed-analyzed-progress"></span>
             </div>
 
-            <div class="empty-state">
-                La actividad operativa se agregará en la siguiente fase.
+            <small id="ed-analyzed-percent">
+                0% del total
+            </small>
+        </article>
+
+        <article class="ed-footer-metric">
+            <span>Tasa de maliciosidad</span>
+
+            <strong id="ed-malicious-rate">0%</strong>
+
+            <div class="ed-progress ed-progress-red">
+                <span id="ed-malicious-rate-progress"></span>
             </div>
 
+            <small id="ed-malicious-rate-detail">
+                0 IOC maliciosos
+            </small>
+        </article>
+
+        <article class="ed-footer-metric">
+            <span>Última actualización</span>
+
+            <strong id="ed-last-update">
+                Sin actualizar
+            </strong>
+
+            <small>
+                Datos obtenidos en tiempo real
+            </small>
+        </article>
+
+        <article class="ed-footer-metric">
+            <span>Exportación rápida</span>
+
+            <div class="ed-export-buttons">
+                <button
+                    type="button"
+                    id="ed-export-csv"
+                >
+                    CSV
+                </button>
+
+                <button
+                    type="button"
+                    disabled
+                    title="Disponible próximamente"
+                >
+                    Excel
+                </button>
+
+                <button
+                    type="button"
+                    disabled
+                    title="Disponible próximamente"
+                >
+                    PDF
+                </button>
+            </div>
         </article>
 
     </section>

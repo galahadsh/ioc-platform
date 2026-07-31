@@ -1,4 +1,3 @@
-import { cargarExecutiveDashboard } from "./executive-dashboard.js?v=20260731-1";
 import {
     initializeRouter
 } from "./core/router.js";
@@ -18,7 +17,7 @@ import {
 
 
 function initializeDashboardView() {
-    cargarExecutiveDashboard();
+    cargarDashboard();
 }
 
 

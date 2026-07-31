@@ -1,320 +1,104 @@
-# IOC Platform
 
-Plataforma de Ciberinteligencia para la gestión, enriquecimiento y análisis de Indicadores de Compromiso (IOC).
+# IOC Platform Enterprise
 
-El proyecto está diseñado para evolucionar hacia una plataforma centralizada para equipos de:
+> Threat Intelligence Platform • IOC Management • Incident Response
 
-- Ciberinteligencia
-- Threat Hunting
-- Respuesta a Incidentes
-- Threat Intelligence
+## Tabla de contenido
+- Introducción
+- Arquitectura
+- Tecnologías
+- Instalación
+- API
+- Roadmap
+- Git Flow
+- Troubleshooting
 
----
+## Introducción
+IOC Platform Enterprise es una plataforma para la administración de IOCs, Threat Intelligence y Respuesta a Incidentes.
 
-# Estado del proyecto
+## Arquitectura
 
-Versión actual
-
-```
-v0.3.0-alpha
-```
-
-Estado
-
-- ✅ Backend modular
-- ✅ PostgreSQL
-- ✅ Collector VirusTotal
-- ✅ Dashboard inicial
-- ✅ API REST
-- ✅ Docker
-- ✅ Nginx
-- 🚧 IOC Explorer
-- ⏳ Threat Intelligence
-- ⏳ Threat Hunting
-- ⏳ Reportes
-
----
-
-# Arquitectura
-
-```
-                    IOC Platform
-
-        +------------------------------+
-        |         Frontend             |
-        +--------------+---------------+
-                       |
-                       v
-                FastAPI REST API
-                       |
-      +----------------+----------------+
-      |                                 |
-      v                                 v
-   Services                      Collector
-      |                                 |
-      v                                 v
-Repositories                  VirusTotal API
-      |
-      v
- PostgreSQL
+```mermaid
+flowchart LR
+Browser-->Nginx
+Nginx-->FastAPI
+FastAPI-->Services
+Services-->Repositories
+Repositories-->SQLAlchemy
+SQLAlchemy-->PostgreSQL
+FastAPI-->VirusTotal
+FastAPI-->Splunk
+FastAPI-->TheHive
+FastAPI-->Cortex
 ```
 
----
+## Tecnologías
 
-# Estructura del proyecto
+|Componente|Tecnología|
+|---|---|
+|Backend|FastAPI|
+|ORM|SQLAlchemy 2|
+|DB|PostgreSQL|
+|Frontend|HTML/CSS/JS|
+|Contenedores|Docker|
+|Proxy|Nginx|
 
-```
-ioc-platform/
+## Estructura
 
-├── api/
-│   ├── routes/
-│   ├── services/
-│   ├── repositories/
-│   ├── models/
-│   ├── schemas/
-│   ├── static/
-│   ├── uploads/
-│   └── main.py
-│
-├── collector/
-│   ├── clients/
-│   ├── repositories/
-│   ├── services/
-│   └── main.py
-│
-├── database/
-│   ├── init.sql
-│   └── migrations/
-│
-├── scheduler/
-│
-├── nginx/
-│
-├── uploads/
-│
-├── docker-compose.yml
-│
-└── README.md
+```text
+api/
+collector/
+database/
+scheduler/
+uploads/
+exports/
+docker-compose.yml
+README.md
 ```
 
----
-
-# Componentes
-
-## API
-
-FastAPI
-
-Funciones
-
-- Carga de IOC
-- Dashboard
-- Historial
-- Estadísticas
-- Health Check
-
----
-
-## Collector
-
-Enriquece automáticamente los IOC utilizando VirusTotal.
-
-Actualmente obtiene:
-
-- Malicious
-- Suspicious
-- Harmless
-- Undetected
-- HTTP Status
-- Errores
-- Reintentos
-
----
-
-## Base de datos
-
-PostgreSQL 16
-
-Tabla principal
-
-```
-iocs
-```
-
-Optimizada con índices para:
-
-- Tipo
-- Estado
-- Fecha
-- Score
-- Última consulta
-
----
-
-# Docker
-
-Servicios
-
-| Servicio | Puerto |
-|----------|--------|
-| API | 8000 |
-| Nginx | 80 |
-| PostgreSQL | 5432 |
-| Adminer | 8080 |
-| Collector | Interno |
-| Scheduler | Interno |
-
----
-
-# Variables de entorno
-
-Ejemplo
-
-```
-POSTGRES_DB=cyberintel
-POSTGRES_USER=cyberintel
-POSTGRES_PASSWORD=********
-
-VT_API_KEY=xxxxxxxxxxxxxxxx
-```
-
-Nunca subir el archivo `.env` al repositorio.
-
----
-
-# Ejecutar
-
-Levantar todos los servicios
+## Instalación
 
 ```bash
+git clone <repo>
+cd ioc-platform
 docker compose up -d
 ```
 
-API
+## API
 
-```
-http://localhost:8000
-```
+- GET /api/v2/iocs
+- GET /api/v2/iocs/{id}
+- GET /api/v2/iocs/dashboard
 
-Adminer
+## Roadmap
 
-```
-http://localhost:8080
-```
-
----
-
-# API
-
-## Dashboard
-
-```
-GET /api/stats
-```
-
----
-
-## Health
-
-```
-GET /api/health
-```
-
----
-
-## IOC
-
-```
-POST /api/upload
-```
-
----
-
-# Migraciones
-
-Las migraciones se encuentran en:
-
-```
-database/migrations/
-```
-
-Ejemplo
-
-```
-002_vt_error_tracking.sql
-
-003_ioc_indexes.sql
-```
-
----
-
-# Roadmap
-
-## v0.3
-
-- Dashboard Profesional
+- Dashboard Enterprise
 - IOC Explorer
+- IOC Detail
+- Campaigns
+- Threat Actors
+- Malware
+- MITRE ATT&CK
+- Integraciones
+- Graph Explorer
 
----
+## Git Flow
 
-## v0.4
+```text
+main
+develop
+enterprise-v2
+feature/*
+```
 
-- IOC Collections
+## Troubleshooting
 
----
+```bash
+docker compose ps
+docker compose logs api
+docker exec -it ioc-nginx nginx -T
+```
 
-## v0.5
+## Licencia
 
-- Threat Intelligence
-
----
-
-## v0.6
-
-- Threat Hunting
-
----
-
-## v0.7
-
-- Integración con TheHive
-
----
-
-## v0.8
-
-- Reportes Ejecutivos
-
----
-
-## v1.0
-
-Plataforma completa de Ciberinteligencia
-
-- IOC Explorer
-- Threat Intelligence
-- Threat Hunting
-- Integración TheHive
-- Reportes
-- Dashboard Ejecutivo
-- Automatización
-
----
-
-# Tecnologías
-
-- FastAPI
-- PostgreSQL
-- Docker
-- Nginx
-- VirusTotal API
-- Python
-- JavaScript
-- HTML
-- CSS
-
----
-
-# Licencia
-
-Proyecto interno de investigación y desarrollo.
+Uso interno.

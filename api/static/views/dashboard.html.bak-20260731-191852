@@ -1,0 +1,133 @@
+<section class="page-view">
+
+    <header class="topbar">
+
+        <div>
+            <span class="section-eyebrow">
+                IOC Platform
+            </span>
+
+            <h1>Dashboard</h1>
+
+            <p class="panel-description">
+                Estado general y actividad operativa de la plataforma.
+            </p>
+        </div>
+
+        <div class="status">
+
+            <span id="db-status">
+                🟢 PostgreSQL
+            </span>
+
+            <span id="collector-status">
+                🟢 Collector
+            </span>
+
+            <span id="api-status">
+                🟢 API
+            </span>
+
+        </div>
+
+    </header>
+
+    <section class="cards">
+
+        <div class="card">
+            <h3>Total IOC</h3>
+            <p id="total">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Maliciosos</h3>
+            <p id="maliciosos">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Sospechosos</h3>
+            <p id="sospechosos">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Limpios</h3>
+            <p id="limpios">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Pendientes</h3>
+            <p id="pendientes">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Errores</h3>
+            <p id="errores">0</p>
+        </div>
+
+    </section>
+
+    <section class="dashboard-grid">
+
+        <article class="panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h2>Servicios</h2>
+
+                    <p class="panel-description">
+                        Estado de los componentes principales.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="service-status-list">
+
+                <div class="service-status-item">
+                    <span>PostgreSQL</span>
+                    <strong>Operativo</strong>
+                </div>
+
+                <div class="service-status-item">
+                    <span>API</span>
+                    <strong>Operativa</strong>
+                </div>
+
+                <div class="service-status-item">
+                    <span>Collector</span>
+                    <strong>Operativo</strong>
+                </div>
+
+                <div class="service-status-item">
+                    <span>VirusTotal</span>
+                    <strong>Configurado</strong>
+                </div>
+
+            </div>
+
+        </article>
+
+        <article class="panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h2>Actividad reciente</h2>
+
+                    <p class="panel-description">
+                        Resumen de las tareas recientes.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="empty-state">
+                La actividad operativa se agregará en la siguiente fase.
+            </div>
+
+        </article>
+
+    </section>
+
+</section>
