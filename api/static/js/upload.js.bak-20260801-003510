@@ -1,0 +1,111 @@
+import {
+    uploadIOC
+} from "./api.js";
+
+import {
+    cargarDashboard,
+    cargarIOCs
+} from "./dashboard.js";
+
+
+function getElement(id) {
+    return document.getElementById(id);
+}
+
+
+function showResult(message, isError = false) {
+    const result = getElement("resultado");
+
+    if (!result) {
+        return;
+    }
+
+    result.textContent = message;
+    result.classList.toggle(
+        "upload-result-error",
+        isError
+    );
+    result.classList.toggle(
+        "upload-result-success",
+        !isError
+    );
+}
+
+
+async function handleUpload() {
+    const input = getElement("archivo");
+    const button = getElement("subir-archivo");
+
+    if (!input?.files?.length) {
+        showResult(
+            "Selecciona un archivo CSV.",
+            true
+        );
+        return;
+    }
+
+    const file = input.files[0];
+
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+        showResult(
+            "El archivo debe tener extensión CSV.",
+            true
+        );
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    if (button) {
+        button.disabled = true;
+        button.textContent = "Subiendo…";
+    }
+
+    showResult("Procesando archivo…");
+
+    try {
+        const response = await uploadIOC(formData);
+
+        showResult(
+            response.message ??
+            "Archivo importado correctamente."
+        );
+
+        input.value = "";
+
+        await Promise.allSettled([
+            cargarDashboard(),
+            cargarIOCs()
+        ]);
+
+    } catch (error) {
+        console.error(
+            "Error subiendo CSV:",
+            error
+        );
+
+        showResult(
+            error.message ??
+            "No fue posible subir el archivo.",
+            true
+        );
+
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = "Subir archivo";
+        }
+    }
+}
+
+
+export function configurarUpload() {
+    const button = getElement("subir-archivo");
+
+    if (!button) {
+        return;
+    }
+
+    button.onclick = handleUpload;
+}

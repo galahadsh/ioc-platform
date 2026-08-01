@@ -1,0 +1,95 @@
+<button id="uw-start-vt-button">
+    Analizar en VirusTotal
+</button>
+
+<button id="uw-job-status">
+    Estado del análisis
+</button>
+<section class="panel vt-control-panel">
+
+    <div class="panel-header">
+        <div>
+            <span class="section-eyebrow">
+                Enrichment Control
+            </span>
+
+            <h2>Análisis en VirusTotal</h2>
+
+            <p class="panel-description">
+                Los IOC importados permanecen almacenados
+                como pendientes hasta que se inicie manualmente
+                el análisis.
+            </p>
+        </div>
+
+        <span
+            id="vt-job-status"
+            class="vt-status-badge"
+            data-status="idle"
+        >
+            idle
+        </span>
+    </div>
+
+    <div class="vt-summary-grid">
+
+        <article>
+            <span>Pendientes</span>
+            <strong id="vt-pending-count">0</strong>
+        </article>
+
+        <article>
+            <span>Analizados</span>
+            <strong id="vt-analyzed-count">0</strong>
+        </article>
+
+        <article>
+            <span>Errores</span>
+            <strong id="vt-errors-count">0</strong>
+        </article>
+
+    </div>
+
+    <div class="vt-progress-track">
+        <span id="vt-progress-bar"></span>
+    </div>
+
+    <span id="vt-progress-text">
+        0 de 0 (0%)
+    </span>
+
+    <div
+        id="vt-control-message"
+        class="vt-control-message"
+        hidden
+    ></div>
+
+    <div class="vt-control-actions">
+
+        <button
+            id="start-virustotal-analysis"
+            type="button"
+            class="upload-button"
+        >
+            Iniciar análisis en VirusTotal
+        </button>
+
+        <button
+            id="refresh-virustotal-status"
+            type="button"
+            class="button-secondary"
+        >
+            Actualizar estado
+        </button>
+
+        <button
+            id="retry-virustotal-errors"
+            type="button"
+            class="button-secondary"
+        >
+            Reintentar errores
+        </button>
+
+    </div>
+
+</section>

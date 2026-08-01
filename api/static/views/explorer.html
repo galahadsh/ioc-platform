@@ -51,13 +51,26 @@
                 accept=".csv,text/csv"
             >
 
-            <button
-                type="button"
-                id="subir-archivo"
-                class="upload-button"
-            >
-                Subir archivo
-            </button>
+            <div class="upload-actions">
+
+                <button
+                    type="button"
+                    id="subir-archivo"
+                    class="upload-button"
+                >
+                    Subir archivo
+                </button>
+
+                <a
+                    class="template-download-button"
+                    href="/api/templates/ioc-enterprise"
+                    download
+                >
+                    <span aria-hidden="true">⇩</span>
+                    Descargar plantilla Enterprise
+                </a>
+
+            </div>
 
             <p class="upload-help">
                 Formato soportado: CSV

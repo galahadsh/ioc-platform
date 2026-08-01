@@ -1,14 +1,41 @@
 export async function uploadIOC(formData) {
-    const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData
-    });
+    const response = await fetch(
+        "/api/upload",
+        {
+            method: "POST",
+            body: formData,
+            cache: "no-store"
+        }
+    );
 
-    if (!response.ok) {
-        throw new Error("Error al subir el archivo.");
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) ?? "";
+
+    let payload;
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+        payload = await response.json();
+    } else {
+        payload = {
+            detail: await response.text()
+        };
     }
 
-    return await response.json();
+    if (!response.ok) {
+        throw new Error(
+            payload.detail ??
+            payload.message ??
+            `Error HTTP ${response.status}`
+        );
+    }
+
+    return payload;
 }
 
 
