@@ -1,4 +1,9 @@
 const routes = {
+    "/uploads": {
+        view: "/static/views/uploads.html",
+        module: "uploads"
+    },
+
     "/dashboard": {
         view: "/static/views/dashboard.html",
         module: "dashboard"

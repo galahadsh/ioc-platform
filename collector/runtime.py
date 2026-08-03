@@ -2,47 +2,23 @@ from typing import Any
 
 from psycopg2.extensions import connection
 
+from event_logger import add_event
 
-def add_job_event(
+
+ACTIVE_STATUSES = (
+    "pending",
+    "running",
+    "paused",
+)
+
+
+def claim_next_job(
     conn: connection,
-    job_id: int,
-    message: str,
-    level: str = "INFO",
-    event_type: str = "general",
-    ioc_id: int | None = None,
-) -> None:
-    with conn.cursor() as cursor:
-        cursor.execute(
-            """
-            INSERT INTO enrichment_job_events (
-                job_id,
-                level,
-                event_type,
-                message,
-                ioc_id
-            )
-            VALUES (
-                %s,
-                %s,
-                %s,
-                %s,
-                %s
-            )
-            """,
-            (
-                job_id,
-                level.upper(),
-                event_type,
-                message,
-                ioc_id,
-            ),
-        )
-
-
-def claim_pending_job(
-    conn: connection,
-    provider: str = "virustotal",
 ) -> dict[str, Any] | None:
+    """
+    Toma de forma exclusiva el siguiente trabajo pendiente.
+    """
+
     with conn.cursor() as cursor:
         cursor.execute(
             """
@@ -50,16 +26,15 @@ def claim_pending_job(
                 id,
                 provider,
                 total_items,
-                rate_limit_per_minute,
-                max_attempts
+                COALESCE(max_attempts, 3),
+                COALESCE(rate_limit_per_minute, 4)
             FROM enrichment_jobs
-            WHERE provider = %s
+            WHERE provider = 'virustotal'
               AND status = 'pending'
             ORDER BY created_at
             LIMIT 1
             FOR UPDATE SKIP LOCKED
-            """,
-            (provider,),
+            """
         )
 
         row = cursor.fetchone()
@@ -67,13 +42,15 @@ def claim_pending_job(
         if row is None:
             return None
 
-        (
-            job_id,
-            job_provider,
-            total_items,
-            rate_limit,
-            max_attempts,
-        ) = row
+        job = {
+            "id": row[0],
+            "provider": row[1],
+            "total_items": int(row[2] or 0),
+            "max_attempts": int(row[3] or 3),
+            "rate_limit_per_minute": int(
+                row[4] or 4
+            ),
+        }
 
         cursor.execute(
             """
@@ -91,37 +68,38 @@ def claim_pending_job(
                 last_activity_at = CURRENT_TIMESTAMP
             WHERE id = %s
             """,
-            (job_id,),
+            (job["id"],),
         )
 
-        add_job_event(
-            conn=conn,
-            job_id=job_id,
-            level="INFO",
-            event_type="job_started",
-            message=(
-                "Iniciando trabajo de VirusTotal "
-                f"ID: {job_id}"
-            ),
-        )
+    add_event(
+        conn=conn,
+        job_id=job["id"],
+        level="INFO",
+        event_type="job_started",
+        message=(
+            "Trabajo iniciado. "
+            f"Proveedor={job['provider']} "
+            f"Total={job['total_items']} "
+            f"Rate={job['rate_limit_per_minute']}/min."
+        ),
+    )
 
-        return {
-            "id": job_id,
-            "provider": job_provider,
-            "total_items": total_items,
-            "rate_limit_per_minute": rate_limit,
-            "max_attempts": max_attempts,
-        }
+    return job
 
 
-def get_job_control(
+def get_control_state(
     conn: connection,
     job_id: int,
-) -> dict[str, bool] | None:
+) -> dict[str, Any] | None:
+    """
+    Lee las solicitudes de pausa y cancelación.
+    """
+
     with conn.cursor() as cursor:
         cursor.execute(
             """
             SELECT
+                status,
                 pause_requested,
                 cancel_requested
             FROM enrichment_jobs
@@ -132,16 +110,17 @@ def get_job_control(
 
         row = cursor.fetchone()
 
-        if row is None:
-            return None
+    if row is None:
+        return None
 
-        return {
-            "pause_requested": bool(row[0]),
-            "cancel_requested": bool(row[1]),
-        }
+    return {
+        "status": row[0],
+        "pause_requested": bool(row[1]),
+        "cancel_requested": bool(row[2]),
+    }
 
 
-def mark_job_paused(
+def set_paused(
     conn: connection,
     job_id: int,
 ) -> None:
@@ -157,37 +136,19 @@ def mark_job_paused(
             (job_id,),
         )
 
-    add_job_event(
+    add_event(
         conn=conn,
         job_id=job_id,
         level="WARN",
         event_type="job_paused",
-        message="El análisis fue pausado.",
+        message=(
+            "Trabajo pausado. El collector "
+            "esperará una solicitud de reanudación."
+        ),
     )
 
 
-def wait_for_resume_or_cancel(
-    conn: connection,
-    job_id: int,
-) -> str:
-    control = get_job_control(
-        conn=conn,
-        job_id=job_id,
-    )
-
-    if control is None:
-        return "cancel"
-
-    if control["cancel_requested"]:
-        return "cancel"
-
-    if control["pause_requested"]:
-        return "pause"
-
-    return "continue"
-
-
-def mark_job_running(
+def set_running(
     conn: connection,
     job_id: int,
 ) -> None:
@@ -204,12 +165,12 @@ def mark_job_running(
             (job_id,),
         )
 
-    add_job_event(
+    add_event(
         conn=conn,
         job_id=job_id,
         level="INFO",
         event_type="job_resumed",
-        message="El análisis fue reanudado.",
+        message="Trabajo reanudado.",
     )
 
 
@@ -267,7 +228,7 @@ def clear_current_ioc(
         )
 
 
-def create_job_baseline(
+def create_baseline(
     conn: connection,
     job_id: int,
 ) -> None:
@@ -303,13 +264,13 @@ def create_job_baseline(
             """,
             (
                 job_id,
-                analyzed,
-                errors,
+                int(analyzed or 0),
+                int(errors or 0),
             ),
         )
 
 
-def update_job_progress(
+def update_progress(
     conn: connection,
     job_id: int,
 ) -> dict[str, int]:
@@ -328,10 +289,15 @@ def update_job_progress(
         baseline = cursor.fetchone()
 
         if baseline is None:
-            analyzed_at_start = 0
-            errors_at_start = 0
+            analyzed_start = 0
+            errors_start = 0
         else:
-            analyzed_at_start, errors_at_start = baseline
+            analyzed_start = int(
+                baseline[0] or 0
+            )
+            errors_start = int(
+                baseline[1] or 0
+            )
 
         cursor.execute(
             """
@@ -349,12 +315,12 @@ def update_job_progress(
         analyzed, errors = cursor.fetchone()
 
         successful = max(
-            analyzed - analyzed_at_start,
+            int(analyzed or 0) - analyzed_start,
             0,
         )
 
         failed = max(
-            errors - errors_at_start,
+            int(errors or 0) - errors_start,
             0,
         )
 
@@ -378,18 +344,18 @@ def update_job_progress(
             ),
         )
 
-        return {
-            "processed": processed,
-            "successful": successful,
-            "failed": failed,
-        }
+    return {
+        "processed": processed,
+        "successful": successful,
+        "failed": failed,
+    }
 
 
 def complete_job(
     conn: connection,
     job_id: int,
 ) -> None:
-    progress = update_job_progress(
+    progress = update_progress(
         conn=conn,
         job_id=job_id,
     )
@@ -414,16 +380,16 @@ def complete_job(
             (job_id,),
         )
 
-    add_job_event(
+    add_event(
         conn=conn,
         job_id=job_id,
         level="INFO",
         event_type="job_completed",
         message=(
             "Trabajo completado. "
-            f"Procesados: {progress['processed']}, "
-            f"exitosos: {progress['successful']}, "
-            f"errores: {progress['failed']}."
+            f"Procesados={progress['processed']} "
+            f"Exitosos={progress['successful']} "
+            f"Fallidos={progress['failed']}."
         ),
     )
 
@@ -432,7 +398,7 @@ def cancel_job(
     conn: connection,
     job_id: int,
 ) -> None:
-    update_job_progress(
+    progress = update_progress(
         conn=conn,
         job_id=job_id,
     )
@@ -457,12 +423,15 @@ def cancel_job(
             (job_id,),
         )
 
-    add_job_event(
+    add_event(
         conn=conn,
         job_id=job_id,
         level="WARN",
         event_type="job_cancelled",
-        message="El análisis fue cancelado.",
+        message=(
+            "Trabajo cancelado. "
+            f"Procesados={progress['processed']}."
+        ),
     )
 
 
@@ -493,10 +462,10 @@ def fail_job(
             ),
         )
 
-    add_job_event(
+    add_event(
         conn=conn,
         job_id=job_id,
         level="ERROR",
         event_type="job_failed",
-        message=f"El trabajo falló: {error}",
+        message=f"Trabajo fallido: {error}",
     )

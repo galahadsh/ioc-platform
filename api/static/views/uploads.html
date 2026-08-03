@@ -1,95 +1,434 @@
-<button id="uw-start-vt-button">
-    Analizar en VirusTotal
-</button>
+<section class="ec-page">
 
-<button id="uw-job-status">
-    Estado del análisis
-</button>
-<section class="panel vt-control-panel">
-
-    <div class="panel-header">
+    <header class="ec-page-header">
         <div>
-            <span class="section-eyebrow">
-                Enrichment Control
+            <span class="ec-eyebrow">
+                ENRICHMENT OPERATIONS
             </span>
 
-            <h2>Análisis en VirusTotal</h2>
+            <h1>Análisis en VirusTotal</h1>
 
-            <p class="panel-description">
-                Los IOC importados permanecen almacenados
-                como pendientes hasta que se inicie manualmente
-                el análisis.
+            <p>
+                Supervisa el procesamiento, el IOC actual,
+                los eventos del collector y el avance del trabajo.
             </p>
         </div>
 
-        <span
-            id="vt-job-status"
-            class="vt-status-badge"
-            data-status="idle"
-        >
-            idle
-        </span>
-    </div>
+        <div class="ec-header-actions">
+            <span
+                id="vt-job-status"
+                class="ec-status-badge"
+                data-status="idle"
+            >
+                IDLE
+            </span>
 
-    <div class="vt-summary-grid">
+            <button
+                id="refresh-virustotal-status"
+                type="button"
+                class="ec-button ec-button-secondary"
+            >
+                Actualizar
+            </button>
 
-        <article>
-            <span>Pendientes</span>
-            <strong id="vt-pending-count">0</strong>
-        </article>
+            <button
+                id="start-virustotal-analysis"
+                type="button"
+                class="ec-button ec-button-primary"
+            >
+                Iniciar análisis
+            </button>
+        </div>
+    </header>
 
-        <article>
-            <span>Analizados</span>
-            <strong id="vt-analyzed-count">0</strong>
-        </article>
-
-        <article>
-            <span>Errores</span>
-            <strong id="vt-errors-count">0</strong>
-        </article>
-
-    </div>
-
-    <div class="vt-progress-track">
-        <span id="vt-progress-bar"></span>
-    </div>
-
-    <span id="vt-progress-text">
-        0 de 0 (0%)
-    </span>
 
     <div
         id="vt-control-message"
-        class="vt-control-message"
+        class="ec-message"
         hidden
     ></div>
 
-    <div class="vt-control-actions">
 
-        <button
-            id="start-virustotal-analysis"
-            type="button"
-            class="upload-button"
-        >
-            Iniciar análisis en VirusTotal
-        </button>
+    <section class="ec-kpi-grid">
 
-        <button
-            id="refresh-virustotal-status"
-            type="button"
-            class="button-secondary"
-        >
-            Actualizar estado
-        </button>
+        <article class="ec-kpi-card">
+            <div class="ec-kpi-icon ec-kpi-icon-blue">
+                ⏱
+            </div>
 
-        <button
-            id="retry-virustotal-errors"
-            type="button"
-            class="button-secondary"
-        >
-            Reintentar errores
-        </button>
+            <div>
+                <span>PENDIENTES</span>
+                <strong id="vt-pending-count">0</strong>
+            </div>
+        </article>
 
-    </div>
+        <article class="ec-kpi-card">
+            <div class="ec-kpi-icon ec-kpi-icon-green">
+                ✓
+            </div>
+
+            <div>
+                <span>ANALIZADOS</span>
+                <strong id="vt-analyzed-count">0</strong>
+            </div>
+        </article>
+
+        <article class="ec-kpi-card">
+            <div class="ec-kpi-icon ec-kpi-icon-red">
+                !
+            </div>
+
+            <div>
+                <span>ERRORES</span>
+                <strong id="vt-errors-count">0</strong>
+            </div>
+        </article>
+
+        <article class="ec-kpi-card">
+            <div class="ec-kpi-icon ec-kpi-icon-cyan">
+                #
+            </div>
+
+            <div>
+                <span>TOTAL DEL JOB</span>
+                <strong id="vt-total-count">0</strong>
+            </div>
+        </article>
+
+    </section>
+
+
+    <section class="ec-panel ec-progress-panel">
+
+        <div class="ec-progress-header">
+            <div>
+                <span class="ec-panel-label">
+                    PROGRESO DEL ANÁLISIS
+                </span>
+
+                <strong id="vt-progress-title">
+                    Esperando trabajo
+                </strong>
+            </div>
+
+            <strong
+                id="vt-progress-percentage"
+                class="ec-progress-percentage"
+            >
+                0.00%
+            </strong>
+        </div>
+
+        <div class="ec-progress-track">
+            <span id="vt-progress-bar"></span>
+        </div>
+
+        <div class="ec-progress-footer">
+            <span id="vt-progress-text">
+                0 de 0 procesados
+            </span>
+
+            <span id="vt-estimated-finish">
+                Finalización estimada: —
+            </span>
+        </div>
+
+        <div class="ec-runtime-metrics">
+
+            <div>
+                <span>PROVEEDOR</span>
+                <strong id="vt-provider">
+                    VirusTotal
+                </strong>
+            </div>
+
+            <div>
+                <span>LÍMITE</span>
+                <strong id="vt-rate-limit">
+                    4 IOC/min
+                </strong>
+            </div>
+
+            <div>
+                <span>TRANSCURRIDO</span>
+                <strong id="vt-elapsed">
+                    00:00:00
+                </strong>
+            </div>
+
+            <div>
+                <span>RESTANTE</span>
+                <strong id="vt-remaining-time">
+                    00:00:00
+                </strong>
+            </div>
+
+            <div>
+                <span>INICIO</span>
+                <strong id="vt-started-at">
+                    —
+                </strong>
+            </div>
+
+            <div>
+                <span>JOB ID</span>
+                <strong id="vt-job-id">
+                    —
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="ec-runtime-grid">
+
+        <article class="ec-panel ec-current-panel">
+
+            <header class="ec-panel-header">
+                <div>
+                    <span class="ec-panel-label">
+                        ELEMENTO ACTUAL
+                    </span>
+
+                    <h2>IOC en procesamiento</h2>
+                </div>
+
+                <span
+                    id="vt-current-state"
+                    class="ec-current-state"
+                >
+                    En espera
+                </span>
+            </header>
+
+            <div class="ec-current-ioc">
+
+                <span id="vt-current-type-badge">
+                    —
+                </span>
+
+                <strong id="vt-current-value">
+                    Ningún IOC en proceso
+                </strong>
+
+                <small id="vt-current-source">
+                    Fuente: —
+                </small>
+
+            </div>
+
+            <dl class="ec-current-details">
+
+                <div>
+                    <dt>Tipo</dt>
+                    <dd id="vt-current-type">—</dd>
+                </div>
+
+                <div>
+                    <dt>Intento</dt>
+                    <dd id="vt-current-attempt">0 / 3</dd>
+                </div>
+
+                <div>
+                    <dt>IOC ID</dt>
+                    <dd id="vt-current-id">—</dd>
+                </div>
+
+                <div>
+                    <dt>Actividad</dt>
+                    <dd id="vt-last-activity">—</dd>
+                </div>
+
+            </dl>
+
+        </article>
+
+
+        <article class="ec-panel ec-console-panel">
+
+            <header class="ec-panel-header">
+                <div>
+                    <span class="ec-panel-label">
+                        SALIDA VERBOSE
+                    </span>
+
+                    <h2>Collector Console</h2>
+                </div>
+
+                <div class="ec-console-toolbar">
+
+                    <label>
+                        <input
+                            id="vt-console-autoscroll"
+                            type="checkbox"
+                            checked
+                        >
+                        Autoscroll
+                    </label>
+
+                    <button
+                        id="clear-console-view"
+                        type="button"
+                    >
+                        Limpiar vista
+                    </button>
+
+                </div>
+            </header>
+
+            <div
+                id="vt-live-console"
+                class="ec-live-console"
+                role="log"
+                aria-live="polite"
+            >
+                <div class="ec-console-empty">
+                    Esperando eventos del collector...
+                </div>
+            </div>
+
+            <footer class="ec-console-footer">
+                <span>
+                    Eventos:
+                    <strong id="vt-event-count">0</strong>
+                </span>
+
+                <span id="vt-console-connection">
+                    Conectando...
+                </span>
+            </footer>
+
+        </article>
+
+
+        <aside class="ec-side-column">
+
+            <article class="ec-panel ec-job-summary">
+
+                <header class="ec-panel-header">
+                    <div>
+                        <span class="ec-panel-label">
+                            RESUMEN DEL JOB
+                        </span>
+
+                        <h2>Estado actual</h2>
+                    </div>
+                </header>
+
+                <dl>
+                    <div>
+                        <dt>Estado</dt>
+                        <dd id="vt-summary-status">
+                            Idle
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Progreso</dt>
+                        <dd id="vt-summary-progress">
+                            0 / 0
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Completado</dt>
+                        <dd id="vt-summary-percentage">
+                            0.00%
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Exitosos</dt>
+                        <dd id="vt-success-count">
+                            0
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Fallidos</dt>
+                        <dd id="vt-failed-count">
+                            0
+                        </dd>
+                    </div>
+
+                </dl>
+
+            </article>
+
+
+            <article class="ec-panel ec-job-controls">
+
+                <header class="ec-panel-header">
+                    <div>
+                        <span class="ec-panel-label">
+                            CONTROL DEL JOB
+                        </span>
+
+                        <h2>Acciones</h2>
+                    </div>
+                </header>
+
+                <button
+                    id="pause-virustotal-analysis"
+                    type="button"
+                    class="ec-button ec-button-warning"
+                    disabled
+                >
+                    Pausar análisis
+                </button>
+
+                <button
+                    id="resume-virustotal-analysis"
+                    type="button"
+                    class="ec-button ec-button-primary"
+                    disabled
+                >
+                    Reanudar análisis
+                </button>
+
+                <button
+                    id="cancel-virustotal-analysis"
+                    type="button"
+                    class="ec-button ec-button-danger"
+                    disabled
+                >
+                    Cancelar análisis
+                </button>
+
+                <button
+                    id="retry-virustotal-errors"
+                    type="button"
+                    class="ec-button ec-button-secondary"
+                >
+                    Reintentar errores
+                </button>
+
+            </article>
+
+
+            <article class="ec-panel ec-rate-note">
+
+                <span class="ec-rate-icon">i</span>
+
+                <div>
+                    <strong>
+                        Rate limit activo
+                    </strong>
+
+                    <p>
+                        La velocidad está limitada por la cuota
+                        configurada de VirusTotal. Los reintentos
+                        y respuestas HTTP 429 pueden aumentar
+                        el tiempo estimado.
+                    </p>
+                </div>
+
+            </article>
+
+        </aside>
+
+    </section>
 
 </section>

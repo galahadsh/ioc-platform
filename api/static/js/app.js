@@ -1,4 +1,4 @@
-import "./enrichment-control.js?v=20260731-1";
+import "./enrichment-control.js?v=20260803-6";
 import "./upload.js?v=20260731-5";
 import { cargarExecutiveDashboard } from "./executive-dashboard.js?v=20260731-1";
 import {
@@ -82,7 +82,10 @@ document.addEventListener(
                 initializeStatisticsView();
                 break;
 
-            default:
+            case "uploads":
+            break;
+
+        default:
                 break;
         }
     }

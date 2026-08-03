@@ -491,17 +491,6 @@ function appendConsoleEvent(event) {
 
     consoleElement.appendChild(line);
 
-    const maximumConsoleLines = 300;
-
-    while (
-        consoleElement.children.length >
-        maximumConsoleLines
-    ) {
-        consoleElement.removeChild(
-            consoleElement.firstElementChild
-        );
-    }
-
     totalRenderedEvents += 1;
 
     setText(
@@ -659,89 +648,40 @@ function resetConsole() {
 
 
 function isEnrichmentViewVisible() {
-    return (
-        window.location.hash === "#/uploads" &&
-        Boolean(element("vt-live-console")) &&
-        Boolean(element("vt-job-status"))
+    return Boolean(
+        element("vt-live-console") &&
+        element("vt-job-status")
     );
-}
-
-
-let pollingActive = false;
-let statusRequestInProgress = false;
-let eventsRequestInProgress = false;
-
-
-async function pollStatusSafely() {
-    if (
-        !pollingActive ||
-        !isEnrichmentViewVisible() ||
-        statusRequestInProgress
-    ) {
-        return;
-    }
-
-    statusRequestInProgress = true;
-
-    try {
-        await loadVirusTotalStatus();
-    } finally {
-        statusRequestInProgress = false;
-    }
-}
-
-
-async function pollEventsSafely() {
-    if (
-        !pollingActive ||
-        !isEnrichmentViewVisible() ||
-        eventsRequestInProgress
-    ) {
-        return;
-    }
-
-    eventsRequestInProgress = true;
-
-    try {
-        await loadVirusTotalEvents();
-    } finally {
-        eventsRequestInProgress = false;
-    }
 }
 
 
 function startPolling() {
-    if (
-        pollingActive ||
-        !isEnrichmentViewVisible()
-    ) {
-        return;
-    }
+    stopPolling();
 
-    pollingActive = true;
-
-    pollStatusSafely();
-    pollEventsSafely();
+    loadVirusTotalStatus();
+    loadVirusTotalEvents();
 
     statusTimer = window.setInterval(
-        pollStatusSafely,
-        5000
-    );
-
-    eventsTimer = window.setInterval(
-        pollEventsSafely,
+        () => {
+            if (isEnrichmentViewVisible()) {
+                loadVirusTotalStatus();
+            }
+        },
         3000
     );
 
-    console.log(
-        "Polling de enriquecimiento iniciado."
+    eventsTimer = window.setInterval(
+        () => {
+            if (isEnrichmentViewVisible()) {
+                loadVirusTotalEvents();
+            }
+        },
+        2000
     );
 }
 
 
 function stopPolling() {
-    pollingActive = false;
-
     if (statusTimer !== null) {
         window.clearInterval(statusTimer);
         statusTimer = null;
@@ -751,27 +691,6 @@ function stopPolling() {
         window.clearInterval(eventsTimer);
         eventsTimer = null;
     }
-
-    statusRequestInProgress = false;
-    eventsRequestInProgress = false;
-
-    console.log(
-        "Polling de enriquecimiento detenido."
-    );
-}
-
-
-function synchronizePollingWithRoute() {
-    window.setTimeout(
-        () => {
-            if (isEnrichmentViewVisible()) {
-                startPolling();
-            } else {
-                stopPolling();
-            }
-        },
-        100
-    );
 }
 
 
@@ -792,8 +711,10 @@ function configureControls() {
                     "#refresh-virustotal-status"
                 )
             ) {
-                pollStatusSafely();
-                pollEventsSafely();
+                Promise.all([
+                    loadVirusTotalStatus(),
+                    loadVirusTotalEvents()
+                ]);
             }
 
             if (
@@ -840,20 +761,44 @@ function configureControls() {
 
     window.addEventListener(
         "hashchange",
-        synchronizePollingWithRoute
+        () => {
+            window.setTimeout(
+                () => {
+                    if (isEnrichmentViewVisible()) {
+                        startPolling();
+                    } else {
+                        stopPolling();
+                    }
+                },
+                150
+            );
+        }
     );
 
-    document.addEventListener(
-        "iocplatform:view-loaded",
-        synchronizePollingWithRoute
+    const observer = new MutationObserver(
+        () => {
+            if (isEnrichmentViewVisible()) {
+                startPolling();
+            }
+        }
     );
 
-    window.addEventListener(
-        "beforeunload",
-        stopPolling
+    observer.observe(
+        document.body,
+        {
+            childList: true,
+            subtree: true
+        }
     );
 
-    synchronizePollingWithRoute();
+    window.setTimeout(
+        () => {
+            if (isEnrichmentViewVisible()) {
+                startPolling();
+            }
+        },
+        250
+    );
 }
 
 
@@ -861,4 +806,31 @@ configureControls();
 
 console.log(
     "Enrichment Control cargado correctamente."
+);
+
+console.log(
+    "Botón iniciar:",
+    document.getElementById(
+        "start-virustotal-analysis"
+    )
+);
+
+document.addEventListener(
+    "click",
+    event => {
+        const button = event.target.closest(
+            "#start-virustotal-analysis, " +
+            "#pause-virustotal-analysis, " +
+            "#resume-virustotal-analysis, " +
+            "#cancel-virustotal-analysis, " +
+            "#retry-virustotal-errors"
+        );
+
+        if (button) {
+            console.log(
+                "Clic detectado:",
+                button.id
+            );
+        }
+    }
 );

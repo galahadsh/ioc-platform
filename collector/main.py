@@ -13,10 +13,16 @@ from repositories.ioc_repository import (
     get_pending_iocs,
 )
 from repositories.job_repository import (
+    add_job_event,
+    cancel_job,
     claim_pending_job,
     complete_job,
     create_job_baseline,
     fail_job,
+    get_job_control,
+    mark_job_paused,
+    mark_job_running,
+    set_current_ioc,
     update_job_progress,
 )
 from services.analysis_service import update_analysis
@@ -34,14 +40,69 @@ logging.basicConfig(
 logger = logging.getLogger("ioc-collector")
 
 
+def handle_job_control(
+    conn,
+    job_id: int,
+) -> str:
+    control = get_job_control(
+        conn=conn,
+        job_id=job_id,
+    )
+
+    if control is None:
+        return "cancel"
+
+    if control["cancel_requested"]:
+        cancel_job(
+            conn=conn,
+            job_id=job_id,
+        )
+
+        conn.commit()
+        return "cancel"
+
+    if not control["pause_requested"]:
+        return "continue"
+
+    mark_job_paused(
+        conn=conn,
+        job_id=job_id,
+    )
+
+    conn.commit()
+
+    while True:
+        time.sleep(2)
+
+        control = get_job_control(
+            conn=conn,
+            job_id=job_id,
+        )
+
+        if control is None:
+            return "cancel"
+
+        if control["cancel_requested"]:
+            cancel_job(
+                conn=conn,
+                job_id=job_id,
+            )
+
+            conn.commit()
+            return "cancel"
+
+        if not control["pause_requested"]:
+            mark_job_running(
+                conn=conn,
+                job_id=job_id,
+            )
+
+            conn.commit()
+            return "continue"
+
+
 def process_job(job: dict) -> None:
     job_id = job["id"]
-
-    logger.info(
-        "Iniciando job VT id=%s total=%s",
-        job_id,
-        job["total_items"],
-    )
 
     conn = get_connection()
 
@@ -51,11 +112,52 @@ def process_job(job: dict) -> None:
             job_id=job_id,
         )
 
+        add_job_event(
+            conn=conn,
+            job_id=job_id,
+            level="INFO",
+            event_type="queue_info",
+            message=(
+                "IOC pendientes en cola: "
+                f"{job['total_items']}"
+            ),
+        )
+
+        add_job_event(
+            conn=conn,
+            job_id=job_id,
+            level="INFO",
+            event_type="rate_limit",
+            message=(
+                "Límite configurado: "
+                f"{job['rate_limit_per_minute']} "
+                "consultas por minuto."
+            ),
+        )
+
         conn.commit()
+
+        logger.info(
+            "Iniciando job VT id=%s total=%s",
+            job_id,
+            job["total_items"],
+        )
 
         vt_client = VirusTotalClient()
 
         while True:
+            control_result = handle_job_control(
+                conn=conn,
+                job_id=job_id,
+            )
+
+            if control_result == "cancel":
+                logger.info(
+                    "Job VT id=%s cancelado",
+                    job_id,
+                )
+                return
+
             pending_iocs = get_pending_iocs(
                 conn=conn,
                 limit=COLLECTOR_BATCH_SIZE,
@@ -74,9 +176,59 @@ def process_job(job: dict) -> None:
                 ioc_type,
                 value,
                 retry_count,
+                source,
             ) in pending_iocs:
+                control_result = handle_job_control(
+                    conn=conn,
+                    job_id=job_id,
+                )
+
+                if control_result == "cancel":
+                    logger.info(
+                        "Job VT id=%s cancelado",
+                        job_id,
+                    )
+                    return
+
+                progress = update_job_progress(
+                    conn=conn,
+                    job_id=job_id,
+                )
+
+                current_number = (
+                    progress["processed"] + 1
+                )
+
+                attempt = retry_count + 1
+
+                set_current_ioc(
+                    conn=conn,
+                    job_id=job_id,
+                    ioc_id=ioc_id,
+                    ioc_type=ioc_type,
+                    value=value,
+                    source=source,
+                    attempt=attempt,
+                )
+
+                add_job_event(
+                    conn=conn,
+                    job_id=job_id,
+                    level="INFO",
+                    event_type="ioc_started",
+                    ioc_id=ioc_id,
+                    message=(
+                        f"[{current_number}/"
+                        f"{job['total_items']}] "
+                        f"Consultando {value} "
+                        f"({ioc_type})."
+                    ),
+                )
+
+                conn.commit()
+
                 try:
-                    process_ioc(
+                    success = process_ioc(
                         conn=conn,
                         client=vt_client,
                         ioc_id=ioc_id,
@@ -90,20 +242,70 @@ def process_job(job: dict) -> None:
                             analysis_id
                         )
 
-                    update_job_progress(
+                    progress = update_job_progress(
                         conn=conn,
                         job_id=job_id,
                     )
 
+                    if success:
+                        level = "INFO"
+                        event_type = "ioc_analyzed"
+                        message = (
+                            f"IOC {value} analizado "
+                            "correctamente."
+                        )
+                    else:
+                        level = "WARN"
+                        event_type = "ioc_pending_or_error"
+                        message = (
+                            f"IOC {value} no quedó "
+                            "analizado en este intento."
+                        )
+
+                    add_job_event(
+                        conn=conn,
+                        job_id=job_id,
+                        level=level,
+                        event_type=event_type,
+                        ioc_id=ioc_id,
+                        message=message,
+                    )
+
+                    add_job_event(
+                        conn=conn,
+                        job_id=job_id,
+                        level="DEBUG",
+                        event_type="progress",
+                        message=(
+                            "Progreso actualizado: "
+                            f"{progress['processed']} de "
+                            f"{job['total_items']}."
+                        ),
+                    )
+
                     conn.commit()
 
-                except Exception:
+                except Exception as error:
                     conn.rollback()
 
                     logger.exception(
                         "Error procesando IOC id=%s",
                         ioc_id,
                     )
+
+                    add_job_event(
+                        conn=conn,
+                        job_id=job_id,
+                        level="ERROR",
+                        event_type="ioc_exception",
+                        ioc_id=ioc_id,
+                        message=(
+                            f"Error procesando IOC "
+                            f"{value}: {error}"
+                        ),
+                    )
+
+                    conn.commit()
 
             for analysis_id in analysis_ids:
                 try:
@@ -114,13 +316,26 @@ def process_job(job: dict) -> None:
 
                     conn.commit()
 
-                except Exception:
+                except Exception as error:
                     conn.rollback()
 
                     logger.exception(
                         "Error actualizando análisis id=%s",
                         analysis_id,
                     )
+
+                    add_job_event(
+                        conn=conn,
+                        job_id=job_id,
+                        level="ERROR",
+                        event_type="analysis_update_error",
+                        message=(
+                            "Error actualizando análisis "
+                            f"{analysis_id}: {error}"
+                        ),
+                    )
+
+                    conn.commit()
 
         complete_job(
             conn=conn,
@@ -176,7 +391,6 @@ def get_next_job() -> dict | None:
             return None
 
         conn.commit()
-
         return job
 
     finally:
