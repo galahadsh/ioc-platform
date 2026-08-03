@@ -1,0 +1,22 @@
+                   List of relations
+ Schema |           Name           | Type  |   Owner    
+--------+--------------------------+-------+------------
+ public | analysis                 | table | cyberintel
+ public | campaigns                | table | cyberintel
+ public | case_iocs                | table | cyberintel
+ public | cases                    | table | cyberintel
+ public | enrichment_job_baselines | table | cyberintel
+ public | enrichment_job_events    | table | cyberintel
+ public | enrichment_jobs          | table | cyberintel
+ public | feeds                    | table | cyberintel
+ public | ioc_relationships        | table | cyberintel
+ public | ioc_tags                 | table | cyberintel
+ public | ioc_types                | table | cyberintel
+ public | iocs                     | table | cyberintel
+ public | malware                  | table | cyberintel
+ public | sightings                | table | cyberintel
+ public | sources                  | table | cyberintel
+ public | tags                     | table | cyberintel
+ public | threat_actors            | table | cyberintel
+(17 rows)
+

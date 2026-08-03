@@ -1,0 +1,10 @@
+002_vt_error_tracking.sql
+003_ioc_indexes.sql
+004_enterprise_schema.sql
+005_reference_data.sql
+006_ioc_types.sql
+007_enterprise_constraints.sql
+008_enrichment_jobs.sql
+009_enrichment_job_baselines.sql
+010_enrichment_job_runtime.sql
+011_enrichment_job_events.sql

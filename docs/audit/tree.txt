@@ -1,0 +1,291 @@
+.
+├── api
+│   ├── config.py
+│   ├── core
+│   │   └── __init__.py
+│   ├── database.py
+│   ├── main.py
+│   ├── main.py.bak-20260801-010346
+│   ├── models
+│   │   ├── base.py
+│   │   ├── __init__.py
+│   │   ├── ioc.py
+│   │   └── __pycache__
+│   ├── modules
+│   │   ├── actors
+│   │   ├── campaigns
+│   │   ├── dashboard
+│   │   ├── __init__.py
+│   │   ├── integrations
+│   │   ├── iocs
+│   │   ├── malware
+│   │   ├── mitre
+│   │   ├── __pycache__
+│   │   └── reports
+│   ├── __pycache__
+│   │   ├── config.cpython-312.pyc
+│   │   ├── database.cpython-312.pyc
+│   │   ├── main.backup.cpython-312.pyc
+│   │   └── main.cpython-312.pyc
+│   ├── repositories
+│   │   ├── dashboard_repository.py
+│   │   ├── __init__.py
+│   │   ├── ioc_orm_repository.py
+│   │   ├── ioc_orm_repository.py.bak-20260731-232016
+│   │   ├── ioc_repository.py
+│   │   ├── __pycache__
+│   │   └── stats_repository.py
+│   ├── requirements.txt
+│   ├── routes
+│   │   ├── analysis.py
+│   │   ├── dashboard_v2.py
+│   │   ├── enrichment.py
+│   │   ├── enrichment.py.bak-20260803-183528
+│   │   ├── health.py
+│   │   ├── __init__.py
+│   │   ├── iocs_orm.py
+│   │   ├── iocs_orm.py.bak-20260731-232101
+│   │   ├── iocs.py
+│   │   ├── __pycache__
+│   │   ├── stats.py
+│   │   ├── templates.py
+│   │   └── upload.py
+│   ├── schemas
+│   │   ├── dashboard.py
+│   │   ├── __init__.py
+│   │   ├── ioc_orm.py
+│   │   ├── ioc_orm.py.bak-20260731-232036
+│   │   └── __pycache__
+│   ├── services
+│   │   ├── dashboard_service.py
+│   │   ├── health_service.py
+│   │   ├── __init__.py
+│   │   ├── ioc_service.py
+│   │   ├── ioc_v2_service.py
+│   │   ├── __pycache__
+│   │   └── stats_service.py
+│   ├── shared
+│   │   └── __init__.py
+│   ├── static
+│   │   ├── assets
+│   │   ├── css
+│   │   ├── index.html
+│   │   ├── index.html.backup
+│   │   ├── js
+│   │   ├── templates
+│   │   └── views
+│   ├── uploads
+│   └── utils
+│       ├── __init__.py
+│       ├── ioc.py
+│       └── __pycache__
+├── archive
+│   └── 2026-07-29
+│       ├── docker-compose.yml.backup
+│       ├── docker-compose.yml.bak
+│       ├── main.backup.py
+│       ├── main.py.backup
+│       ├── main.py.bak
+│       ├── main.py.legacy
+│       ├── main.py.pre_refactor
+│       └── static.backup-refactor-20260727-144718
+├── backups
+│   └── cyberintel_before_collector_refactor.sql
+├── CHANGELOG.md
+├── collector
+│   ├── clients
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   └── virustotal.py
+│   ├── config.py
+│   ├── database.py
+│   ├── engine.py
+│   ├── event_logger.py
+│   ├── generate_report.py
+│   ├── import_csv.py
+│   ├── main.py
+│   ├── main.py.bak-20260803-183516
+│   ├── __pycache__
+│   │   ├── config.cpython-312.pyc
+│   │   ├── database.cpython-312.pyc
+│   │   ├── engine.cpython-312.pyc
+│   │   ├── event_logger.cpython-312.pyc
+│   │   ├── main.cpython-312.pyc
+│   │   ├── runtime.cpython-312.pyc
+│   │   └── worker.cpython-312.pyc
+│   ├── repositories
+│   │   ├── __init__.py
+│   │   ├── ioc_repository.py
+│   │   ├── ioc_repository.py.bak-20260803-183507
+│   │   ├── job_repository.py
+│   │   ├── job_repository.py.bak-20260803-183455
+│   │   └── __pycache__
+│   ├── requirements.txt
+│   ├── runtime.py
+│   ├── services
+│   │   ├── analysis_service.py
+│   │   ├── enrichment_service.py
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   ├── vt_enrichment.legacy.py
+│   └── worker.py
+├── dashboard
+├── data
+│   ├── iocs.csv
+│   └── Iocs.csv
+├── database
+│   ├── init.sql
+│   └── migrations
+│       ├── 002_vt_error_tracking.sql
+│       ├── 003_ioc_indexes.sql
+│       ├── 004_enterprise_schema.sql
+│       ├── 005_reference_data.sql
+│       ├── 006_ioc_types.sql
+│       ├── 007_enterprise_constraints.sql
+│       ├── 008_enrichment_jobs.sql
+│       ├── 009_enrichment_job_baselines.sql
+│       ├── 010_enrichment_job_runtime.sql
+│       └── 011_enrichment_job_events.sql
+├── docker-compose.yml
+├── docs
+│   └── audit
+│       └── tree.txt
+├── exports
+│   ├── IOC_Report_20260724_0154.xlsx
+│   ├── IOC_Report_20260724_0210.xlsx
+│   ├── IOC_Report_20260724_0211.xlsx
+│   └── IOC_Report_20260724_0216.xlsx
+├── init.sql
+├── logs
+├── models
+│   ├── base.py
+│   ├── campaign.py
+│   ├── case.py
+│   ├── feed.py
+│   ├── __init__.py
+│   ├── ioc.py
+│   ├── malware.py
+│   ├── relationship.py
+│   ├── source.py
+│   ├── tag.py
+│   └── threat_actor.py
+├── nginx
+│   └── default.conf
+├── postgres
+│   ├── base
+│   │   ├── 1
+│   │   ├── 16384
+│   │   ├── 4
+│   │   └── 5
+│   ├── global
+│   │   ├── 1213
+│   │   ├── 1213_fsm
+│   │   ├── 1213_vm
+│   │   ├── 1214
+│   │   ├── 1232
+│   │   ├── 1233
+│   │   ├── 1260
+│   │   ├── 1260_fsm
+│   │   ├── 1260_vm
+│   │   ├── 1261
+│   │   ├── 1261_fsm
+│   │   ├── 1261_vm
+│   │   ├── 1262
+│   │   ├── 1262_fsm
+│   │   ├── 1262_vm
+│   │   ├── 2396
+│   │   ├── 2396_fsm
+│   │   ├── 2396_vm
+│   │   ├── 2397
+│   │   ├── 2671
+│   │   ├── 2672
+│   │   ├── 2676
+│   │   ├── 2677
+│   │   ├── 2694
+│   │   ├── 2695
+│   │   ├── 2697
+│   │   ├── 2698
+│   │   ├── 2846
+│   │   ├── 2847
+│   │   ├── 2964
+│   │   ├── 2965
+│   │   ├── 2966
+│   │   ├── 2967
+│   │   ├── 3592
+│   │   ├── 3593
+│   │   ├── 4060
+│   │   ├── 4061
+│   │   ├── 4175
+│   │   ├── 4176
+│   │   ├── 4177
+│   │   ├── 4178
+│   │   ├── 4181
+│   │   ├── 4182
+│   │   ├── 4183
+│   │   ├── 4184
+│   │   ├── 4185
+│   │   ├── 4186
+│   │   ├── 6000
+│   │   ├── 6001
+│   │   ├── 6002
+│   │   ├── 6100
+│   │   ├── 6114
+│   │   ├── 6115
+│   │   ├── 6243
+│   │   ├── 6244
+│   │   ├── 6245
+│   │   ├── 6246
+│   │   ├── 6247
+│   │   ├── 6302
+│   │   ├── 6303
+│   │   ├── pg_control
+│   │   ├── pg_filenode.map
+│   │   └── pg_internal.init
+│   ├── pg_commit_ts
+│   ├── pg_dynshmem
+│   ├── pg_hba.conf
+│   ├── pg_ident.conf
+│   ├── pg_logical
+│   │   ├── mappings
+│   │   ├── replorigin_checkpoint
+│   │   └── snapshots
+│   ├── pg_multixact
+│   │   ├── members
+│   │   └── offsets
+│   ├── pg_notify
+│   ├── pg_replslot
+│   ├── pg_serial
+│   ├── pg_snapshots
+│   ├── pg_stat
+│   │   └── pgstat.stat
+│   ├── pg_stat_tmp
+│   ├── pg_subtrans
+│   │   └── 0000
+│   ├── pg_tblspc
+│   ├── pg_twophase
+│   ├── PG_VERSION
+│   ├── pg_wal
+│   │   ├── 000000010000000000000001
+│   │   └── archive_status
+│   ├── pg_xact
+│   │   └── 0000
+│   ├── postgresql.auto.conf
+│   ├── postgresql.conf
+│   └── postmaster.opts
+├── prueba.csv
+├── README.md
+├── repositories
+│   └── __init__.py
+├── scheduler
+│   └── run_scheduler.py
+├── schemas
+│   └── __init__.py
+└── uploads
+    ├── 1656356f797341249f500c092c54bb76_ioc_NOVA.csv
+    ├── 48b2fed40e0343468a28d63ff517e38e_ioc_enterprise_template.csv
+    ├── IOCs The Gentlemen_JUL26.csv
+    ├── Iocs.csv
+    ├── Ips.csv
+    └── prueba.csv
+
+87 directories, 202 files

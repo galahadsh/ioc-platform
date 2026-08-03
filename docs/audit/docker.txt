@@ -1,0 +1,7 @@
+NAME            IMAGE          COMMAND                   SERVICE     CREATED       STATUS       PORTS
+ioc-adminer     adminer        "entrypoint.sh docke…"    adminer     10 days ago   Up 10 days   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+ioc-api         python:3.12    "/bin/bash -c '\npip …"   api         7 days ago    Up 2 hours   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+ioc-collector   python:3.12    "/bin/bash -c '\npip …"   collector   10 days ago   Up 2 hours   
+ioc-nginx       nginx:latest   "/docker-entrypoint.…"    nginx       10 days ago   Up 2 hours   0.0.0.0:80->80/tcp, [::]:80->80/tcp
+ioc-postgres    postgres:16    "docker-entrypoint.s…"    postgres    10 days ago   Up 10 days   5432/tcp
+ioc-scheduler   python:3.12    "tail -f /dev/null"       scheduler   10 days ago   Up 10 days   
