@@ -371,3 +371,56 @@ class IOCOrmRepository:
             "analizado": analyzed,
             "errores": errors,
         }
+
+    def get_details(
+        self,
+        ioc_id: int,
+    ):
+        ioc = self.get_by_id(ioc_id)
+
+        if ioc is None:
+            return None
+
+        return {
+            "ioc": ioc,
+
+            "virustotal": {
+                "estado": ioc.vt_estado,
+                "score": ioc.vt_score,
+                "malicious": ioc.vt_malicious,
+                "suspicious": ioc.vt_suspicious,
+                "harmless": ioc.vt_harmless,
+                "undetected": ioc.vt_undetected,
+                "ultima_consulta": ioc.ultima_consulta,
+            },
+
+            "geolocation": {
+                "country": getattr(ioc, "country", None),
+                "region": getattr(ioc, "region", None),
+                "city": getattr(ioc, "city", None),
+                "asn": getattr(ioc, "asn", None),
+                "isp": getattr(ioc, "isp", None),
+            },
+
+            "campaign": {
+                "name": getattr(ioc, "campaign", None),
+            },
+
+            "malware": {
+                "family": getattr(
+                    ioc,
+                    "malware_family",
+                    None,
+                ),
+            },
+
+            "actor": {},
+
+            "tags": [],
+
+            "relationships": [],
+
+            "timeline": [],
+
+            "sightings": [],
+        }

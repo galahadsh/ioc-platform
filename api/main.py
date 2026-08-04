@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from routes import ioc_details
 
 from config import STATIC_DIR
 from modules.dashboard import router as dashboard_v2_router
@@ -52,3 +53,4 @@ app.include_router(upload.router)
 app.include_router(iocs.router)
 app.include_router(analysis.router)
 app.include_router(iocs_orm_router)
+app.include_router(ioc_details.router)

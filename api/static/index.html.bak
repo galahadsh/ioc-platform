@@ -15,10 +15,6 @@
         rel="stylesheet"
         href="/static/css/main.css"
     >
-    <link
-        rel="stylesheet"
-        href="/static/css/panel.css?v=20260803-4"
-    >
     <link rel="stylesheet" href="/static/css/enrichment-control.css?v=20260803-1">
 </head>
 
@@ -227,117 +223,8 @@
 
     <script
         type="module"
-        src="/static/js/app.js?v=20260803-12"
+        src="/static/js/app.js?v=20260803-6"
     ></script>
-
-
-<aside
-    id="ioc-detail-panel"
-    class="ioc-detail-panel"
-    aria-hidden="true"
->
-    <div class="ioc-header">
-        <div>
-            <span id="ioc-type" class="ioc-type">
-                IOC
-            </span>
-
-            <h2 id="ioc-value">
-                --
-            </h2>
-        </div>
-
-        <button
-            id="close-ioc-panel"
-            type="button"
-            aria-label="Cerrar detalle del IOC"
-        >
-            ✕
-        </button>
-    </div>
-
-    <div class="status-row">
-        <span
-            id="ioc-status"
-            class="status-badge unknown"
-        >
-            UNKNOWN
-        </span>
-    </div>
-
-    <section class="detail-card">
-        <h3>VirusTotal</h3>
-
-        <div class="metric">
-            <label>Score</label>
-            <span id="vt-score">--</span>
-        </div>
-
-        <div class="metric">
-            <label>Malicious</label>
-            <span id="vt-malicious">--</span>
-        </div>
-
-        <div class="metric">
-            <label>Suspicious</label>
-            <span id="vt-suspicious">--</span>
-        </div>
-
-        <div class="metric">
-            <label>Harmless</label>
-            <span id="vt-harmless">--</span>
-        </div>
-    </section>
-
-    <section class="detail-card">
-        <h3>Geolocation</h3>
-
-        <div class="metric">
-            <label>Country</label>
-            <span id="geo-country">--</span>
-        </div>
-
-        <div class="metric">
-            <label>Region</label>
-            <span id="geo-region">--</span>
-        </div>
-
-        <div class="metric">
-            <label>City</label>
-            <span id="geo-city">--</span>
-        </div>
-
-        <div class="metric">
-            <label>ASN</label>
-            <span id="geo-asn">--</span>
-        </div>
-
-        <div class="metric">
-            <label>ISP</label>
-            <span id="geo-isp">--</span>
-        </div>
-    </section>
-
-    <section class="detail-card">
-        <h3>Threat Intelligence</h3>
-
-        <div class="metric">
-            <label>Campaign</label>
-            <span id="campaign-name">--</span>
-        </div>
-
-        <div class="metric">
-            <label>Malware</label>
-            <span id="malware-name">--</span>
-        </div>
-
-        <div class="metric">
-            <label>Threat Actor</label>
-            <span id="actor-name">--</span>
-        </div>
-    </section>
-</aside>
-
 
 </body>
 

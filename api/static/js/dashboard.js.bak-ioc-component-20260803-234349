@@ -442,48 +442,131 @@ function closeIOCDetail() {
 
 
 async function openIOCDetail(iocId) {
-    const numericId = Number(iocId);
+    const drawer = getElement("ioc-detail-drawer");
+    const backdrop = getElement("ioc-drawer-backdrop");
+    const loading = getElement("ioc-detail-loading");
+    const content = getElement("ioc-detail-content");
+    const errorBox = getElement("ioc-detail-error");
 
-    if (
-        !Number.isInteger(numericId) ||
-        numericId <= 0
-    ) {
-        console.error(
-            "IOC ID inválido:",
-            iocId
-        );
-
+    if (!drawer) {
         return;
     }
 
-    const componentOpen =
-        window.openIOCDetail;
-
-    if (
-        typeof componentOpen !==
-        "function"
-    ) {
-        console.error(
-            "El componente IOC Detail " +
-            "no está disponible."
-        );
-
-        return;
+    if (backdrop) {
+        backdrop.hidden = false;
     }
 
-    document
-        .querySelectorAll(
-            "#tabla tr[data-ioc-id]"
-        )
-        .forEach((row) => {
-            row.classList.toggle(
-                "ioc-row-selected",
-                Number(row.dataset.iocId) ===
-                    numericId
-            );
-        });
+    drawer.classList.add("is-open");
+    drawer.setAttribute("aria-hidden", "false");
+    document.body.classList.add("ioc-drawer-open");
 
-    await componentOpen(numericId);
+    if (loading) {
+        loading.hidden = false;
+    }
+
+    if (content) {
+        content.hidden = true;
+    }
+
+    if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.textContent = "";
+    }
+
+    try {
+        const ioc = await getIOCDetail(iocId);
+        const classification = classifyIOC(ioc);
+
+        setDetailText("ioc-detail-value", ioc.valor);
+        setDetailText("ioc-detail-id", ioc.id);
+        setDetailText("ioc-detail-type", ioc.tipo);
+        setDetailText("ioc-detail-status", ioc.vt_estado);
+        setDetailText(
+            "ioc-detail-provider",
+            ioc.proveedor_reputacion ?? "-"
+        );
+        setDetailText("ioc-detail-source", ioc.fuente ?? "-");
+        setDetailText(
+            "ioc-detail-campaign",
+            ioc.campaign ?? "Sin campaña"
+        );
+        setDetailText(
+            "ioc-detail-malware",
+            ioc.malware_family ?? "No identificado"
+        );
+        setDetailText(
+            "ioc-detail-score",
+            ioc.vt_score ?? 0
+        );
+        setDetailText(
+            "ioc-detail-malicious",
+            ioc.vt_malicious ?? 0
+        );
+        setDetailText(
+            "ioc-detail-suspicious",
+            ioc.vt_suspicious ?? 0
+        );
+        setDetailText(
+            "ioc-detail-harmless",
+            ioc.vt_harmless ?? 0
+        );
+        setDetailText(
+            "ioc-detail-undetected",
+            ioc.vt_undetected ?? 0
+        );
+        setDetailText(
+            "ioc-detail-created",
+            formatDate(ioc.fecha_creacion)
+        );
+        setDetailText(
+            "ioc-detail-updated",
+            formatDate(ioc.ultima_consulta)
+        );
+
+        const badge = getElement(
+            "ioc-detail-classification"
+        );
+
+        if (badge) {
+            badge.textContent = classification.label;
+            badge.className =
+                "ioc-detail-classification " +
+                classification.cssClass;
+        }
+
+        const copyButton = getElement("copy-ioc-value");
+
+        if (copyButton) {
+            copyButton.onclick = async () => {
+                await navigator.clipboard.writeText(
+                    ioc.valor ?? ""
+                );
+
+                copyButton.textContent = "Copiado";
+
+                window.setTimeout(() => {
+                    copyButton.textContent = "Copiar IOC";
+                }, 1400);
+            };
+        }
+
+        if (content) {
+            content.hidden = false;
+        }
+
+    } catch (error) {
+        console.error(error);
+
+        if (errorBox) {
+            errorBox.textContent =
+                "No fue posible obtener el detalle del IOC.";
+            errorBox.hidden = false;
+        }
+    } finally {
+        if (loading) {
+            loading.hidden = true;
+        }
+    }
 }
 
 
@@ -611,19 +694,6 @@ export function configurarIOCExplorer() {
                 }
             }
         );
-
-    /*
-     * Carga inicial del Explorer.
-     * Con filtros vacíos muestra todos los IOC paginados.
-     */
-    state.page = 1;
-
-    state.pageSize = Number(
-        getElement("ioc-page-size")?.value
-        ?? 25
-    );
-
-    cargarIOCs();
 }
 
 

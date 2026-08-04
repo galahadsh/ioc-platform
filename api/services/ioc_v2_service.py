@@ -67,3 +67,11 @@ class IOCV2Service:
                     page < total_pages,
             },
         }
+
+    def get_details(
+        self,
+        ioc_id: int,
+    ):
+        return self.repository.get_details(
+            ioc_id
+        )

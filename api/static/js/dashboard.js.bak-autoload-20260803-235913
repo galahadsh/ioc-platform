@@ -611,19 +611,6 @@ export function configurarIOCExplorer() {
                 }
             }
         );
-
-    /*
-     * Carga inicial del Explorer.
-     * Con filtros vacíos muestra todos los IOC paginados.
-     */
-    state.page = 1;
-
-    state.pageSize = Number(
-        getElement("ioc-page-size")?.value
-        ?? 25
-    );
-
-    cargarIOCs();
 }
 
 
