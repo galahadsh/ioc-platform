@@ -34,3 +34,17 @@ exports/*
 
 # Docker
 postgres/
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Environment and runtime
+.env
+logs/
+uploads/
+exports/
+
+# Backups
+*.bak
+*.bak-*
