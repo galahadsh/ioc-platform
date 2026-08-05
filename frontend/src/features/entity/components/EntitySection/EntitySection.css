@@ -1,0 +1,35 @@
+.entity-section{
+
+    margin-bottom:24px;
+
+}
+
+.entity-section:last-child{
+
+    margin-bottom:0;
+
+}
+
+.entity-section__title{
+
+    margin-bottom:14px;
+
+    padding-bottom:8px;
+
+    border-bottom:1px solid var(--border);
+
+    color:var(--text);
+
+    font-size:16px;
+
+    font-weight:700;
+
+}
+
+.entity-section__body{
+
+    display:flex;
+
+    flex-direction:column;
+
+}

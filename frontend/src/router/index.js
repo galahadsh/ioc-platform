@@ -9,6 +9,9 @@ import DefaultLayout from
 import DashboardView from
   "@/views/DashboardView.vue";
 
+import ExplorerView from
+  "@/views/ExplorerView.vue";
+
 const EmptyView = (title) => ({
   name: `${title.replaceAll(" ", "")}View`,
 
@@ -41,8 +44,7 @@ const router = createRouter({
         {
           path: "explorer",
           name: "explorer",
-          component:
-            EmptyView("IOC Explorer"),
+          component: ExplorerView,
         },
         {
           path: "campaigns",

@@ -1,30 +1,24 @@
-import { defineConfig, globalIgnores } from 'eslint/config'
-import globals from 'globals'
-import js from '@eslint/js'
-import pluginVue from 'eslint-plugin-vue'
-import pluginOxlint from 'eslint-plugin-oxlint'
-import skipFormatting from 'eslint-config-prettier/flat'
+import js from "@eslint/js";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
 
-export default defineConfig([
-  {
-    name: 'app/files-to-lint',
-    files: ['**/*.{vue,js,mjs,jsx}'],
-  },
+export default [
+  js.configs.recommended,
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  ...pluginVue.configs["flat/recommended"],
 
   {
+    files: ["**/*.{js,vue}"],
+
     languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
+      globals: globals.browser,
+      ecmaVersion: "latest",
+      sourceType: "module",
+    },
+
+    rules: {
+      "no-unused-vars": "warn",
+      "no-console": "off",
     },
   },
-
-  js.configs.recommended,
-  ...pluginVue.configs['flat/essential'],
-
-  ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
-
-  skipFormatting,
-])
+];

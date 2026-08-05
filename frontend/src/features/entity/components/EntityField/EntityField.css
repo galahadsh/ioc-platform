@@ -1,0 +1,41 @@
+.entity-field{
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:18px;
+    align-items:start;
+    padding:12px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.entity-field:last-child{
+    border-bottom:none;
+}
+
+.entity-field__label{
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--text-muted);
+}
+
+.entity-field__value{
+    color:var(--text);
+    font-size:14px;
+    line-height:1.6;
+    word-break:break-word;
+}
+
+.entity-field__value--empty{
+    color:var(--text-muted);
+    font-style:italic;
+}
+
+@media (max-width:768px){
+
+    .entity-field{
+        grid-template-columns:1fr;
+        gap:6px;
+    }
+
+}

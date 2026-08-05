@@ -1,20 +1,20 @@
-import client from "./client";
+import client from "@/api/client";
 
 const MINIMUM_PAGE_SIZE = 10;
 
-const IOCApi = {
+const ExplorerApi = {
   async list(params = {}) {
+    const requestedPageSize = Number(
+      params.page_size ?? 25,
+    );
+
     const pageSize = Math.max(
-      Number(
-        params.page_size ??
-        MINIMUM_PAGE_SIZE
-      ),
-      MINIMUM_PAGE_SIZE
+      requestedPageSize,
+      MINIMUM_PAGE_SIZE,
     );
 
     const normalizedParams = {
       page: 1,
-      page_size: pageSize,
       ...params,
       page_size: pageSize,
     };
@@ -23,7 +23,7 @@ const IOCApi = {
       "/v2/iocs",
       {
         params: normalizedParams,
-      }
+      },
     );
 
     return response.data;
@@ -37,16 +37,16 @@ const IOCApi = {
       numericId <= 0
     ) {
       throw new Error(
-        "Se requiere un identificador de IOC válido."
+        "El identificador del IOC no es válido.",
       );
     }
 
     const response = await client.get(
-      `/v2/iocs/${numericId}/details`
+      `/v2/iocs/${numericId}/details`,
     );
 
     return response.data;
   },
 };
 
-export default IOCApi;
+export default ExplorerApi;

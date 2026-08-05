@@ -1,0 +1,149 @@
+.ui-button{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    border:none;
+
+    border-radius:var(--radius-md);
+
+    cursor:pointer;
+
+    transition:var(--transition);
+
+    font-weight:600;
+
+    user-select:none;
+
+}
+
+.ui-button:disabled{
+
+    opacity:.55;
+
+    cursor:not-allowed;
+
+}
+
+.ui-button--sm{
+
+    height:34px;
+
+    padding:0 14px;
+
+    font-size:13px;
+
+}
+
+.ui-button--md{
+
+    height:42px;
+
+    padding:0 18px;
+
+    font-size:14px;
+
+}
+
+.ui-button--lg{
+
+    height:48px;
+
+    padding:0 24px;
+
+    font-size:15px;
+
+}
+
+.ui-button--primary{
+
+    background:var(--primary);
+
+    color:white;
+
+}
+
+.ui-button--primary:hover:not(:disabled){
+
+    background:var(--primary-hover);
+
+}
+
+.ui-button--secondary{
+
+    background:var(--surface-hover);
+
+    color:var(--text);
+
+}
+
+.ui-button--secondary:hover:not(:disabled){
+
+    filter:brightness(1.1);
+
+}
+
+.ui-button--success{
+
+    background:var(--success);
+
+    color:white;
+
+}
+
+.ui-button--warning{
+
+    background:var(--warning);
+
+    color:black;
+
+}
+
+.ui-button--danger{
+
+    background:var(--danger);
+
+    color:white;
+
+}
+
+.ui-button--ghost{
+
+    background:transparent;
+
+    border:1px solid var(--border);
+
+    color:var(--text);
+
+}
+
+.ui-button__spinner{
+
+    width:16px;
+
+    height:16px;
+
+    border:2px solid rgba(255,255,255,.35);
+
+    border-top-color:white;
+
+    border-radius:50%;
+
+    animation:spin .8s linear infinite;
+
+}
+
+@keyframes spin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}

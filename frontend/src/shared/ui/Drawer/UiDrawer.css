@@ -1,0 +1,149 @@
+.ui-drawer-enter-active,
+.ui-drawer-leave-active {
+  transition: opacity var(--transition);
+}
+
+.ui-drawer-enter-from,
+.ui-drawer-leave-to {
+  opacity: 0;
+}
+
+.ui-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  background: rgba(2, 8, 23, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.ui-drawer-overlay--right {
+  justify-content: flex-end;
+}
+
+.ui-drawer-overlay--left {
+  justify-content: flex-start;
+}
+
+.ui-drawer {
+  display: flex;
+  flex-direction: column;
+  width: min(
+    var(--ui-drawer-width),
+    100vw
+  );
+  height: 100%;
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow:
+    0 0 45px rgba(0, 0, 0, 0.48);
+  outline: none;
+}
+
+.ui-drawer--right {
+  border-left: 1px solid var(--border);
+  animation:
+    ui-drawer-slide-right
+    0.22s ease;
+}
+
+.ui-drawer--left {
+  border-right: 1px solid var(--border);
+  animation:
+    ui-drawer-slide-left
+    0.22s ease;
+}
+
+.ui-drawer__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ui-drawer__heading {
+  min-width: 0;
+}
+
+.ui-drawer__title {
+  margin: 0;
+  color: var(--text);
+  font-size: 19px;
+  line-height: 1.3;
+}
+
+.ui-drawer__subtitle {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.ui-drawer__close {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.ui-drawer__close:hover {
+  border-color: var(--primary);
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.ui-drawer__body {
+  flex: 1;
+  min-height: 0;
+  padding: 22px;
+  overflow-y: auto;
+}
+
+.ui-drawer__footer {
+  padding: 18px 22px;
+  border-top: 1px solid var(--border);
+  background:
+    rgba(255, 255, 255, 0.015);
+}
+
+@keyframes ui-drawer-slide-right {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes ui-drawer-slide-left {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .ui-drawer {
+    width: 100vw;
+  }
+
+  .ui-drawer__header,
+  .ui-drawer__body,
+  .ui-drawer__footer {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}

@@ -1,60 +1,51 @@
 <template>
-
-<div class="layout">
-
+  <div class="layout">
     <Sidebar />
 
     <div class="main">
+      <Header />
 
-        <Header />
-
-        <main class="content">
-
-            <RouterView />
-
-        </main>
-
+      <main class="content">
+        <RouterView />
+      </main>
     </div>
-
-</div>
-
+  </div>
 </template>
 
 <script setup>
+import Sidebar from
+  "@/shared/layout/Sidebar.vue";
 
-import Sidebar from "../components/layout/Sidebar.vue";
-import Header from "../components/layout/Header.vue";
-
+import Header from
+  "@/shared/layout/Header.vue";
 </script>
 
 <style scoped>
-
-.layout{
-
-    display:grid;
-
-    grid-template-columns:250px 1fr;
-
-    min-height:100vh;
-
-    background:#09111B;
-
+.layout {
+  display: grid;
+  grid-template-columns:
+    250px
+    minmax(0, 1fr);
+  min-height: 100vh;
+  background:
+    var(--background);
 }
 
-.main{
-
-    display:flex;
-
-    flex-direction:column;
-
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.content{
-
-    flex:1;
-
-    overflow:auto;
-
+.content {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
 }
 
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

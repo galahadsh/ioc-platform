@@ -63,7 +63,7 @@ export const useDashboardStore =
 
             this.summary = {
               ...emptySummary(),
-              ...(stats.summary ?? {}),
+              ...stats.summary,
             };
 
             this.byType =
