@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>IOC Platform Enterprise</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/enterprise/css/00-reset.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/enterprise/css/01-theme.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/enterprise/css/02-layout.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/enterprise/css/03-sidebar.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/enterprise/css/04-header.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/enterprise/css/05-components.css"
+    >
+
+    <script
+        type="module"
+        src="/static/enterprise/js/core/app.js"
+    ></script>
+</head>
+
+<body>
+
+    <div class="enterprise-shell">
+
+        <aside class="enterprise-sidebar">
+
+            <div class="enterprise-brand">
+                <div class="enterprise-brand-mark">
+                    IP
+                </div>
+
+                <div>
+                    <strong>IOC Platform</strong>
+                    <span>Threat Intelligence</span>
+                </div>
+            </div>
+
+            <nav class="enterprise-nav">
+
+                <a
+                    href="#/enterprise/dashboard"
+                    class="enterprise-nav-link is-active"
+                >
+                    <span>⌂</span>
+                    Dashboard
+                </a>
+
+                <div class="enterprise-nav-section">
+                    Threat Intelligence
+                </div>
+
+                <a
+                    href="#/enterprise/explorer"
+                    class="enterprise-nav-link"
+                >
+                    <span>⌕</span>
+                    IOC Explorer
+                </a>
+
+                <a
+                    href="#/enterprise/campaigns"
+                    class="enterprise-nav-link"
+                >
+                    <span>◎</span>
+                    Campaigns
+                </a>
+
+                <a
+                    href="#/enterprise/malware"
+                    class="enterprise-nav-link"
+                >
+                    <span>◆</span>
+                    Malware
+                </a>
+
+                <a
+                    href="#/enterprise/actors"
+                    class="enterprise-nav-link"
+                >
+                    <span>◉</span>
+                    Threat Actors
+                </a>
+
+                <div class="enterprise-nav-section">
+                    Operations
+                </div>
+
+                <a
+                    href="#/enterprise/hunting"
+                    class="enterprise-nav-link"
+                >
+                    <span>⌁</span>
+                    Threat Hunting
+                </a>
+
+                <a
+                    href="#/enterprise/cases"
+                    class="enterprise-nav-link"
+                >
+                    <span>▣</span>
+                    Cases
+                </a>
+
+                <a
+                    href="#/enterprise/reports"
+                    class="enterprise-nav-link"
+                >
+                    <span>▤</span>
+                    Reports
+                </a>
+
+            </nav>
+
+            <div class="enterprise-sidebar-footer">
+                <span>IOC Platform Enterprise</span>
+                <small>v1.0 Preview</small>
+            </div>
+
+        </aside>
+
+        <div class="enterprise-main">
+
+            <header class="enterprise-header">
+
+                <div>
+                    <span class="enterprise-eyebrow">
+                        Cyber Threat Intelligence
+                    </span>
+
+                    <h1 id="enterprise-page-title">
+                        Dashboard
+                    </h1>
+                </div>
+
+                <div class="enterprise-header-actions">
+
+                    <label class="enterprise-search">
+                        <span>⌕</span>
+
+                        <input
+                            type="search"
+                            placeholder="Buscar IOC, campaña o malware"
+                        >
+                    </label>
+
+                    <button
+                        type="button"
+                        class="enterprise-icon-button"
+                        aria-label="Actualizar"
+                    >
+                        ↻
+                    </button>
+
+                    <div class="enterprise-user">
+                        <div class="enterprise-avatar">
+                            FG
+                        </div>
+
+                        <div>
+                            <strong>Analista</strong>
+                            <span>Ciberinteligencia</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </header>
+
+            <main
+                id="enterprise-view"
+                class="enterprise-content"
+            >
+
+                <section class="enterprise-page-header">
+
+                    <div>
+                        <span class="enterprise-eyebrow">
+                            OVERVIEW
+                        </span>
+
+                        <h2>Threat Intelligence Dashboard</h2>
+
+                        <p>
+                            Resumen operativo de indicadores,
+                            enriquecimientos y actividad reciente.
+                        </p>
+                    </div>
+
+                    <div class="enterprise-toolbar">
+
+                        <button
+                            type="button"
+                            class="enterprise-button secondary"
+                        >
+                            Exportar
+                        </button>
+
+                        <button
+                            type="button"
+                            class="enterprise-button primary"
+                        >
+                            Nuevo análisis
+                        </button>
+
+                    </div>
+
+                </section>
+
+                <section class="enterprise-metric-grid">
+
+                    <article class="enterprise-metric-card">
+                        <span>IOC TOTALES</span>
+                        <strong>1,050</strong>
+                        <small>Repositorio consolidado</small>
+                    </article>
+
+                    <article class="enterprise-metric-card danger">
+                        <span>MALICIOSOS</span>
+                        <strong>726</strong>
+                        <small>69.1% del total</small>
+                    </article>
+
+                    <article class="enterprise-metric-card warning">
+                        <span>SOSPECHOSOS</span>
+                        <strong>84</strong>
+                        <small>Requieren revisión</small>
+                    </article>
+
+                    <article class="enterprise-metric-card success">
+                        <span>ANALIZADOS</span>
+                        <strong>1,004</strong>
+                        <small>95.6% completado</small>
+                    </article>
+
+                </section>
+
+                <section class="enterprise-dashboard-grid">
+
+                    <article class="enterprise-panel">
+
+                        <header class="enterprise-panel-header">
+                            <div>
+                                <span class="enterprise-eyebrow">
+                                    ACTIVIDAD
+                                </span>
+
+                                <h3>IOC recientes</h3>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="enterprise-button ghost"
+                            >
+                                Ver todos
+                            </button>
+                        </header>
+
+                        <div class="enterprise-table-wrapper">
+
+                            <table class="enterprise-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Indicador</th>
+                                        <th>Estado</th>
+                                        <th>Fuente</th>
+                                        <th>Última consulta</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>IP</td>
+                                        <td>185.76.243.139</td>
+                                        <td>
+                                            <span class="enterprise-badge danger">
+                                                Malicious
+                                            </span>
+                                        </td>
+                                        <td>SOCradar</td>
+                                        <td>Hace 4 min</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>HASH</td>
+                                        <td>f0ac3999d4020cd...</td>
+                                        <td>
+                                            <span class="enterprise-badge danger">
+                                                Malicious
+                                            </span>
+                                        </td>
+                                        <td>VirusTotal</td>
+                                        <td>Hace 8 min</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>DOMAIN</td>
+                                        <td>malware-test.example</td>
+                                        <td>
+                                            <span class="enterprise-badge warning">
+                                                Suspicious
+                                            </span>
+                                        </td>
+                                        <td>Manual</td>
+                                        <td>Hace 15 min</td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </article>
+
+                    <aside class="enterprise-panel">
+
+                        <header class="enterprise-panel-header">
+                            <div>
+                                <span class="enterprise-eyebrow">
+                                    OPERACIÓN
+                                </span>
+
+                                <h3>Estado de servicios</h3>
+                            </div>
+                        </header>
+
+                        <div class="enterprise-health-list">
+
+                            <div>
+                                <span class="enterprise-health-dot success"></span>
+                                <span>API</span>
+                                <strong>Disponible</strong>
+                            </div>
+
+                            <div>
+                                <span class="enterprise-health-dot success"></span>
+                                <span>Collector</span>
+                                <strong>Disponible</strong>
+                            </div>
+
+                            <div>
+                                <span class="enterprise-health-dot success"></span>
+                                <span>PostgreSQL</span>
+                                <strong>Disponible</strong>
+                            </div>
+
+                            <div>
+                                <span class="enterprise-health-dot warning"></span>
+                                <span>VirusTotal</span>
+                                <strong>Rate limited</strong>
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

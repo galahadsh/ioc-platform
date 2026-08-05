@@ -44,6 +44,16 @@ def home():
     )
 
 
+@app.get(
+    "/enterprise",
+    include_in_schema=False,
+)
+def enterprise_home():
+    return FileResponse(
+        STATIC_DIR / "enterprise" / "index.html"
+    )
+
+
 app.include_router(enrichment.router)
 app.include_router(templates.router)
 app.include_router(dashboard_v2_router)

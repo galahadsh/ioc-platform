@@ -1,0 +1,130 @@
+.enterprise-sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px 15px;
+    border-right:
+        1px solid var(--enterprise-border);
+    background:
+        linear-gradient(
+            180deg,
+            rgba(11, 29, 44, 0.99),
+            rgba(5, 17, 27, 0.99)
+        );
+}
+
+.enterprise-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px 22px;
+}
+
+.enterprise-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background:
+        linear-gradient(
+            145deg,
+            #1683ff,
+            #075eb7
+        );
+    box-shadow:
+        0 10px 25px rgba(22, 131, 255, 0.23);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.enterprise-brand strong,
+.enterprise-brand span {
+    display: block;
+}
+
+.enterprise-brand strong {
+    font-size: 14px;
+}
+
+.enterprise-brand span {
+    margin-top: 3px;
+    color: var(--enterprise-muted);
+    font-size: 9px;
+}
+
+.enterprise-nav {
+    display: grid;
+    gap: 4px;
+}
+
+.enterprise-nav-section {
+    margin: 19px 10px 7px;
+    color: #4f6b7e;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.enterprise-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #93a8b7;
+    font-size: 12px;
+    font-weight: 600;
+    transition:
+        background 0.16s ease,
+        color 0.16s ease,
+        border-color 0.16s ease;
+}
+
+.enterprise-nav-link span {
+    width: 18px;
+    color: #5c92b7;
+    text-align: center;
+}
+
+.enterprise-nav-link:hover {
+    border-color:
+        rgba(74, 133, 173, 0.24);
+    background:
+        rgba(21, 64, 91, 0.28);
+    color: #e9f2f8;
+}
+
+.enterprise-nav-link.is-active {
+    border-color:
+        rgba(22, 131, 255, 0.36);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(22, 131, 255, 0.18),
+            rgba(22, 131, 255, 0.05)
+        );
+    color: #fff;
+    box-shadow:
+        inset 3px 0 0 var(--enterprise-primary);
+}
+
+.enterprise-sidebar-footer {
+    display: grid;
+    gap: 4px;
+    margin-top: auto;
+    padding: 17px 11px 3px;
+    border-top:
+        1px solid var(--enterprise-border-soft);
+    color: var(--enterprise-muted);
+    font-size: 9px;
+}
+
+.enterprise-sidebar-footer small {
+    color: #49677a;
+}

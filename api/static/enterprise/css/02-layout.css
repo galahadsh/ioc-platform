@@ -1,0 +1,67 @@
+.enterprise-shell {
+    display: grid;
+    grid-template-columns:
+        var(--enterprise-sidebar-width)
+        minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.enterprise-main {
+    min-width: 0;
+}
+
+.enterprise-content {
+    padding: 28px;
+}
+
+.enterprise-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 22px;
+}
+
+.enterprise-page-header h2 {
+    margin: 0;
+    font-size: 25px;
+    letter-spacing: -0.03em;
+}
+
+.enterprise-page-header p {
+    max-width: 700px;
+    margin: 8px 0 0;
+    color: var(--enterprise-muted);
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.enterprise-eyebrow {
+    display: block;
+    margin-bottom: 7px;
+    color: #61adff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+}
+
+.enterprise-toolbar {
+    display: flex;
+    gap: 9px;
+}
+
+.enterprise-metric-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(170px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.enterprise-dashboard-grid {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.7fr)
+        minmax(260px, 0.65fr);
+    gap: 16px;
+}

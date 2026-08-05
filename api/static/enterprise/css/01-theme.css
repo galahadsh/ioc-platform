@@ -1,0 +1,39 @@
+:root {
+    --enterprise-bg: #07111d;
+    --enterprise-bg-soft: #0a1725;
+    --enterprise-sidebar: #081522;
+    --enterprise-panel: #0d1d2c;
+    --enterprise-panel-soft: #112438;
+    --enterprise-border: #1d3a50;
+    --enterprise-border-soft: rgba(85, 130, 160, 0.22);
+
+    --enterprise-text: #eef5fa;
+    --enterprise-muted: #8198aa;
+    --enterprise-primary: #1683ff;
+    --enterprise-primary-soft: rgba(22, 131, 255, 0.13);
+    --enterprise-success: #39d98a;
+    --enterprise-warning: #f4a621;
+    --enterprise-danger: #ff5068;
+
+    --enterprise-radius-sm: 7px;
+    --enterprise-radius-md: 11px;
+    --enterprise-radius-lg: 16px;
+
+    --enterprise-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.2);
+
+    --enterprise-sidebar-width: 245px;
+    --enterprise-header-height: 84px;
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at 70% -10%,
+            rgba(22, 131, 255, 0.11),
+            transparent 36%
+        ),
+        var(--enterprise-bg);
+
+    color: var(--enterprise-text);
+}
