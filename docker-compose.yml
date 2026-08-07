@@ -17,6 +17,110 @@ services:
       - ioc-network
 
 
+  redis:
+    image: redis:7-alpine
+    container_name: ioc-redis
+    restart: unless-stopped
+
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --requirepass
+      - ${REDIS_PASSWORD}
+
+    volumes:
+      - redis_data:/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep PONG"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+    networks:
+      - ioc-network
+
+
+  minio:
+    image: minio/minio:latest
+    container_name: ioc-minio
+    restart: unless-stopped
+
+    command:
+      - server
+      - /data
+      - --console-address
+      - ":9001"
+
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+
+    volumes:
+      - minio_data:/data
+
+    ports:
+      - "9002:9000"
+      - "9003:9001"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:9000/minio/health/live"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - ioc-network
+
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: ioc-minio-init
+
+    depends_on:
+      minio:
+        condition: service_healthy
+
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+
+        mc alias set cip \
+          http://minio:9000 \
+          "$${MINIO_ROOT_USER}" \
+          "$${MINIO_ROOT_PASSWORD}"
+
+        mc mb \
+          --ignore-existing \
+          "cip/$${MINIO_BUCKET}"
+
+        echo "Bucket listo: $${MINIO_BUCKET}"
+
+    networks:
+      - ioc-network
+
+
   api:
     image: python:3.12
     container_name: ioc-api
@@ -29,22 +133,56 @@ services:
       - ./uploads:/uploads
 
     environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MINIO_SECURE: "false"
 
     ports:
       - "8000:8000"
 
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+
+      redis:
+        condition: service_healthy
+
+      minio:
+        condition: service_healthy
 
     command:
       - /bin/bash
       - -c
       - |
-        pip install --no-cache-dir fastapi uvicorn python-multipart psycopg2-binary sqlalchemy pandas openpyxl jinja2 python-dotenv
-        uvicorn main:app --host 0.0.0.0 --port 8000
+        pip install --no-cache-dir \
+          fastapi \
+          uvicorn \
+          python-multipart \
+          psycopg2-binary \
+          sqlalchemy \
+          pandas \
+          openpyxl \
+          jinja2 \
+          python-dotenv \
+          redis \
+          minio
+
+        uvicorn main:app \
+          --host 0.0.0.0 \
+          --port 8000
 
     networks:
       - ioc-network
@@ -62,19 +200,81 @@ services:
 
     environment:
       VT_API_KEY: ${VT_API_KEY}
+
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+
+      redis:
+        condition: service_healthy
 
     command:
       - /bin/bash
       - -c
       - |
-        pip install --no-cache-dir requests psycopg2-binary python-dotenv
+        pip install --no-cache-dir \
+          requests \
+          psycopg2-binary \
+          python-dotenv \
+          redis
+
         python main.py
+
+    networks:
+      - ioc-network
+
+
+  scheduler:
+    image: python:3.12
+    container_name: ioc-scheduler
+    restart: unless-stopped
+
+    working_dir: /app
+
+    volumes:
+      - ./scheduler:/app
+
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+
+    depends_on:
+      postgres:
+        condition: service_started
+
+      redis:
+        condition: service_healthy
+
+    command:
+      - /bin/bash
+      - -c
+      - |
+        pip install --no-cache-dir \
+          psycopg2-binary \
+          python-dotenv \
+          redis \
+          requests
+
+        python run_scheduler.py
 
     networks:
       - ioc-network
@@ -97,14 +297,34 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
 
     command:
       - /bin/bash
       - -c
       - |
-        pip install --no-cache-dir psycopg2-binary python-dotenv
+        pip install --no-cache-dir \
+          psycopg2-binary \
+          python-dotenv
+
         python database/migrate.py
+
+    networks:
+      - ioc-network
+
+
+  adminer:
+    image: adminer:latest
+    container_name: ioc-adminer
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      postgres:
+        condition: service_started
 
     networks:
       - ioc-network
@@ -122,15 +342,23 @@ services:
       - ./nginx:/etc/nginx/conf.d
 
     depends_on:
-      - api
+      api:
+        condition: service_started
 
     networks:
       - ioc-network
 
 
 volumes:
+
   postgres_data:
 
+  redis_data:
+
+  minio_data:
+
+
 networks:
+
   ioc-network:
     driver: bridge

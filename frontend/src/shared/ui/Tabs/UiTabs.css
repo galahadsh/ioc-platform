@@ -1,0 +1,60 @@
+.ui-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ui-tabs__header {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+
+.ui-tabs__header::-webkit-scrollbar {
+  display: none;
+}
+
+.ui-tabs__button {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 12px 16px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.ui-tabs__button:hover {
+  color: var(--text);
+}
+
+.ui-tabs__button:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.ui-tabs__button--active {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+.ui-tabs__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.ui-tabs__content {
+  min-height: 220px;
+}
+
+.ui-tab-panel:focus {
+  outline: none;
+}

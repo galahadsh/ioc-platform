@@ -1,0 +1,76 @@
+.vt-card{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.vt-score{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 18px;
+    border:1px solid var(--border);
+    border-radius:var(--radius-md);
+    background:var(--surface);
+}
+
+.vt-score__label{
+    color:var(--text-muted);
+    font-size:13px;
+}
+
+.vt-score__value{
+    font-size:32px;
+    font-weight:700;
+    color:var(--primary);
+}
+
+.vt-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+}
+
+.vt-item{
+    border:1px solid var(--border);
+    border-radius:var(--radius-md);
+    padding:14px;
+}
+
+.vt-item__label{
+    color:var(--text-muted);
+    font-size:12px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+}
+
+.vt-item__value{
+    font-size:24px;
+    font-weight:700;
+}
+
+.vt-item--malicious .vt-item__value{
+    color:#ef4444;
+}
+
+.vt-item--suspicious .vt-item__value{
+    color:#f59e0b;
+}
+
+.vt-item--harmless .vt-item__value{
+    color:#22c55e;
+}
+
+.vt-item--undetected .vt-item__value{
+    color:#94a3b8;
+}
+
+@media(max-width:768px){
+
+    .vt-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
