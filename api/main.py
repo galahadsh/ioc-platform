@@ -6,6 +6,10 @@ from routes import ioc_details
 from config import STATIC_DIR
 from modules.dashboard import router as dashboard_v2_router
 from modules.iocs import router as iocs_orm_router
+
+from modules.documents.routes import (
+    router as documents_router,
+)
 from routes import (
     analysis,
     enrichment,
@@ -64,3 +68,4 @@ app.include_router(iocs.router)
 app.include_router(analysis.router)
 app.include_router(iocs_orm_router)
 app.include_router(ioc_details.router)
+app.include_router(documents_router)

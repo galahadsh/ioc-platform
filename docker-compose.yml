@@ -280,6 +280,62 @@ services:
       - ioc-network
 
 
+
+  document-worker:
+    image: python:3.12
+    container_name: ioc-document-worker
+    restart: unless-stopped
+
+    working_dir: /app
+
+    volumes:
+      - ./api:/app
+      - ./workers:/workers
+
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MINIO_SECURE: "false"
+
+    depends_on:
+      postgres:
+        condition: service_started
+
+      redis:
+        condition: service_healthy
+
+      minio:
+        condition: service_healthy
+
+    command:
+      - /bin/bash
+      - -c
+      - |
+        pip install --no-cache-dir \
+          psycopg2-binary \
+          sqlalchemy \
+          redis \
+          minio \
+          python-dotenv
+
+        python /workers/document_worker.py
+
+    networks:
+      - ioc-network
+
   migrator:
     image: python:3.12
     container_name: ioc-migrator
