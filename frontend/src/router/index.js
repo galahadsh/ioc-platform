@@ -12,6 +12,9 @@ import DashboardView from
 import ExplorerView from
   "@/views/ExplorerView.vue";
 
+import DocumentsView from
+  "@/features/documents/views/DocumentsView.vue";
+
 const EmptyView = (title) => ({
   name: `${title.replaceAll(" ", "")}View`,
 
@@ -40,6 +43,11 @@ const router = createRouter({
           path: "",
           name: "dashboard",
           component: DashboardView,
+        },
+        {
+          path: "documents",
+          name: "documents",
+          component: DocumentsView,
         },
         {
           path: "explorer",

@@ -131,6 +131,7 @@ services:
     volumes:
       - ./api:/app
       - ./uploads:/uploads
+      - ./logs:/app/logs
 
     environment:
       POSTGRES_HOST: postgres
@@ -149,6 +150,16 @@ services:
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       MINIO_BUCKET: ${MINIO_BUCKET}
       MINIO_SECURE: "false"
+
+      # Authentication / RBAC
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      ACCESS_TOKEN_MINUTES: ${ACCESS_TOKEN_MINUTES:-15}
+      REFRESH_TOKEN_DAYS: ${REFRESH_TOKEN_DAYS:-7}
+      MAX_LOGIN_ATTEMPTS: ${MAX_LOGIN_ATTEMPTS:-5}
+      ACCOUNT_LOCK_MINUTES: ${ACCOUNT_LOCK_MINUTES:-15}
+
+      # Audit
+      AUDIT_LOG_FILE: /app/logs/audit.log
 
     ports:
       - "8000:8000"
@@ -172,13 +183,17 @@ services:
           uvicorn \
           python-multipart \
           psycopg2-binary \
+          "psycopg[binary]" \
           sqlalchemy \
           pandas \
           openpyxl \
           jinja2 \
           python-dotenv \
           redis \
-          minio
+          minio \
+          argon2-cffi \
+          PyJWT \
+          email-validator
 
         uvicorn main:app \
           --host 0.0.0.0 \
@@ -309,6 +324,12 @@ services:
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       MINIO_BUCKET: ${MINIO_BUCKET}
       MINIO_SECURE: "false"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      ACCESS_TOKEN_MINUTES: ${ACCESS_TOKEN_MINUTES:-15}
+      REFRESH_TOKEN_DAYS: ${REFRESH_TOKEN_DAYS:-7}
+      MAX_LOGIN_ATTEMPTS: ${MAX_LOGIN_ATTEMPTS:-5}
+      ACCOUNT_LOCK_MINUTES: ${ACCOUNT_LOCK_MINUTES:-15}
+      AUDIT_LOG_FILE: /app/logs/audit.log
 
     depends_on:
       postgres:
@@ -344,6 +365,9 @@ services:
 
     volumes:
       - .:/workspace
+      - ./api:/app
+      - ./uploads:/uploads
+      - ./logs:/app/logs
 
     environment:
       POSTGRES_HOST: postgres

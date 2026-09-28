@@ -1,223 +1,149 @@
 <template>
-
-<aside class="sidebar">
-
+  <aside class="sidebar">
     <div class="logo">
+      <div class="logo-icon">
+        🛡
+      </div>
 
-        <div class="logo-icon">
-            🛡
+      <div>
+        <div class="logo-title">
+          Cyber Intelligence
         </div>
 
-        <div>
-
-            <div class="logo-title">
-                IOC Platform
-            </div>
-
-            <div class="logo-subtitle">
-                Enterprise
-            </div>
-
+        <div class="logo-subtitle">
+          Platform
         </div>
-
+      </div>
     </div>
 
     <div class="section">
-
-        GENERAL
-
+      GENERAL
     </div>
 
     <RouterLink to="/">
-
-        📊 Dashboard
-
+      📊 Dashboard
     </RouterLink>
 
     <div class="section">
+      INGESTA
+    </div>
 
-        THREAT INTELLIGENCE
+    <RouterLink to="/documents">
+      📄 Document Center
+    </RouterLink>
 
+    <div class="section">
+      THREAT INTELLIGENCE
     </div>
 
     <RouterLink to="/explorer">
-
-        🔎 IOC Explorer
-
+      🔎 IOC Explorer
     </RouterLink>
 
     <RouterLink to="/campaigns">
-
-        🎯 Campaigns
-
+      🎯 Campaigns
     </RouterLink>
 
     <RouterLink to="/malware">
-
-        🦠 Malware
-
+      🦠 Malware
     </RouterLink>
 
     <RouterLink to="/actors">
-
-        👤 Threat Actors
-
+      👤 Threat Actors
     </RouterLink>
 
     <div class="section">
-
-        OPERATIONS
-
+      OPERATIONS
     </div>
 
     <RouterLink to="/cases">
-
-        📁 Cases
-
+      📁 Cases
     </RouterLink>
 
     <RouterLink to="/reports">
-
-        📑 Reports
-
+      📑 Reports
     </RouterLink>
 
     <div class="footer">
-
-        Version 1.0 Alpha
-
+      Version 1.0 Alpha
     </div>
-
-</aside>
-
+  </aside>
 </template>
 
 <script setup>
-
 </script>
 
 <style scoped>
-
-.sidebar{
-
-    display:flex;
-
-    flex-direction:column;
-
-    background:#111827;
-
-    min-height:100vh;
-
-    padding:25px;
-
-    gap:8px;
-
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 25px;
+  gap: 8px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
 }
 
-.logo{
-
-    display:flex;
-
-    gap:12px;
-
-    align-items:center;
-
-    margin-bottom:30px;
-
+.logo {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
-.logo-icon{
-
-    width:48px;
-
-    height:48px;
-
-    border-radius:12px;
-
-    background:#3B82F6;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-size:22px;
-
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  font-size: 22px;
 }
 
-.logo-title{
-
-    color:white;
-
-    font-size:18px;
-
-    font-weight:bold;
-
+.logo-title {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 800;
 }
 
-.logo-subtitle{
-
-    color:#94A3B8;
-
-    font-size:12px;
-
+.logo-subtitle {
+  color: var(--text-muted);
+  font-size: 12px;
 }
 
-.section{
-
-    margin-top:20px;
-
-    margin-bottom:8px;
-
-    color:#64748B;
-
-    font-size:11px;
-
-    font-weight:bold;
-
-    letter-spacing:1px;
-
+.section {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
-a{
-
-    color:#CBD5E1;
-
-    text-decoration:none;
-
-    padding:12px;
-
-    border-radius:8px;
-
-    transition:.2s;
-
-    font-size:14px;
-
+a {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  transition: var(--transition);
 }
 
-a:hover{
-
-    background:#1F2937;
-
+a:hover {
+  background: var(--surface-hover);
+  color: var(--text);
 }
 
-.router-link-active{
-
-    background:#2563EB;
-
-    color:white;
-
+.router-link-active {
+  background: var(--primary);
+  color: white;
 }
 
-.footer{
-
-    margin-top:auto;
-
-    color:#64748B;
-
-    font-size:12px;
-
+.footer {
+  margin-top: auto;
+  color: var(--text-muted);
+  font-size: 12px;
 }
-
 </style>

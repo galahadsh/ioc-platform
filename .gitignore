@@ -48,3 +48,12 @@ exports/
 # Backups
 *.bak
 *.bak-*
+
+# Security / Audit
+api/logs/*.log
+logs/*.log
+
+# Secrets
+.env
+.env.*
+!.env.example

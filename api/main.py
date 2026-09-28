@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from routes import ioc_details
@@ -6,6 +6,9 @@ from routes import ioc_details
 from config import STATIC_DIR
 from modules.dashboard import router as dashboard_v2_router
 from modules.iocs import router as iocs_orm_router
+from modules.auth import router as auth_router
+from modules.auth.dependencies import require_password_changed
+from modules.auth.routes.admin_users import router as admin_users_router
 
 from modules.documents.routes import (
     router as documents_router,
@@ -58,14 +61,66 @@ def enterprise_home():
     )
 
 
-app.include_router(enrichment.router)
-app.include_router(templates.router)
-app.include_router(dashboard_v2_router)
+app.include_router(
+    enrichment.router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(
+    templates.router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(
+    dashboard_v2_router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
 app.include_router(health.router)
-app.include_router(stats.router)
-app.include_router(upload.router)
-app.include_router(iocs.router)
-app.include_router(analysis.router)
-app.include_router(iocs_orm_router)
-app.include_router(ioc_details.router)
-app.include_router(documents_router)
+app.include_router(
+    stats.router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(
+    upload.router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(
+    iocs.router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(
+    analysis.router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(
+    iocs_orm_router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(
+    ioc_details.router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(
+    documents_router,
+    dependencies=[
+        Depends(require_password_changed),
+    ],
+)
+app.include_router(auth_router)
+app.include_router(admin_users_router)
