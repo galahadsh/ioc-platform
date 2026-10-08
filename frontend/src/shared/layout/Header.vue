@@ -1,64 +1,84 @@
 <template>
-    <header class="header">
+  <header class="header">
+    <div class="header-left">
+      <div class="page-title">
+        IOC Platform Enterprise
+      </div>
+      <div class="breadcrumb">
+        Cyber Threat Intelligence
+      </div>
+    </div>
 
-        <div class="header-left">
+    <div class="header-center">
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar IOC, Campaign, Malware..."
+      />
+    </div>
 
-            <div class="page-title">
-                IOC Platform Enterprise
-            </div>
+    <div class="header-right">
+      <button class="icon-button" title="Actualizar" @click="reload">
+        🔄
+      </button>
 
-            <div class="breadcrumb">
-                Cyber Threat Intelligence
-            </div>
+      <button class="icon-button" title="Notificaciones" disabled>
+        🔔
+      </button>
 
+      <div class="user">
+        <div class="avatar">{{ initials }}</div>
+
+        <div>
+          <div class="user-name">{{ displayName }}</div>
+          <div class="user-role">{{ displayRole }}</div>
         </div>
+      </div>
 
-        <div class="header-center">
-
-            <input
-                class="search"
-                type="text"
-                placeholder="Buscar IOC, Campaign, Malware..."
-            >
-
-        </div>
-
-        <div class="header-right">
-
-            <button class="icon-button">
-                🔄
-            </button>
-
-            <button class="icon-button">
-                🔔
-            </button>
-
-            <div class="user">
-
-                <div class="avatar">
-                    FG
-                </div>
-
-                <div>
-
-                    <div class="user-name">
-                        Fernando
-                    </div>
-
-                    <div class="user-role">
-                        CTI Manager
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </header>
+      <button
+        class="logout-button"
+        type="button"
+        @click="logout"
+      >
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
 </template>
 
 <script setup>
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth.store";
+
+const router = useRouter();
+const auth = useAuthStore();
+
+const displayName = computed(
+  () => auth.user?.full_name || auth.user?.username || "Usuario"
+);
+
+const displayRole = computed(
+  () => auth.user?.roles?.join(", ") || "Sin rol"
+);
+
+const initials = computed(() => {
+  const name = displayName.value.trim();
+  return name
+    .split(/\\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("");
+});
+
+function logout() {
+  auth.clearSession();
+  router.replace("/login");
+}
+
+function reload() {
+  window.location.reload();
+}
 </script>
 
 <style scoped>
@@ -227,4 +247,21 @@
 
 }
 
+
+.logout-button {
+  padding: 10px 14px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0d1725;
+  color: #f1f5f9;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: #1d2e45;
+}
+
+.logout-button:focus-visible {
+  outline: 2px solid #38bdf8;
+}
 </style>

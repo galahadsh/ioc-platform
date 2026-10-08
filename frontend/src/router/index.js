@@ -1,7 +1,13 @@
+import ChangePasswordView from "@/views/ChangePasswordView.vue";
+
+
 import {
   createRouter,
   createWebHistory,
 } from "vue-router";
+
+import LoginView from "@/views/LoginView.vue";
+import { useAuthStore } from "@/stores/auth.store";
 
 import DefaultLayout from
   "@/layouts/DefaultLayout.vue";
@@ -34,6 +40,20 @@ const router = createRouter({
   history: createWebHistory(),
 
   routes: [
+    {
+      path: "/change-password",
+      name: "change-password",
+      component: ChangePasswordView,
+    },
+
+
+    {
+      path: "/login",
+      name: "login",
+      component: LoginView,
+      meta: { public: true },
+    },
+
     {
       path: "/",
       component: DefaultLayout,
@@ -92,6 +112,32 @@ const router = createRouter({
       redirect: "/",
     },
   ],
+});
+
+
+router.beforeEach((to) => {
+  const auth = useAuthStore();
+
+  if (!to.meta.public && !auth.isAuthenticated) {
+    return {
+      name: "login",
+      query: { redirect: to.fullPath },
+    };
+  }
+
+  if (
+    auth.isAuthenticated &&
+    auth.mustChangePassword &&
+    to.path !== "/change-password"
+  ) {
+    return "/change-password";
+  }
+
+  if (to.name === "login" && auth.isAuthenticated) {
+    return "/";
+  }
+
+  return true;
 });
 
 export default router;

@@ -347,6 +347,7 @@ services:
       - |
         pip install --no-cache-dir \
           psycopg2-binary \
+          'psycopg[binary]' \
           sqlalchemy \
           redis \
           minio \
@@ -419,6 +420,7 @@ services:
       - "80:80"
 
     volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
       - ./nginx:/etc/nginx/conf.d
 
     depends_on:
