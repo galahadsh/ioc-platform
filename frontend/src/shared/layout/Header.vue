@@ -1,58 +1,90 @@
 <template>
-  <header class="header">
-    <div class="header-left">
-      <div class="page-title">
-        IOC Platform Enterprise
-      </div>
-      <div class="breadcrumb">
+  <header class="enterprise-header">
+
+    <div class="enterprise-header-title">
+      <span class="enterprise-eyebrow">
         Cyber Threat Intelligence
-      </div>
+      </span>
+      <h1>{{ pageTitle }}</h1>
     </div>
 
-    <div class="header-center">
-      <input
-        class="search"
-        type="text"
-        placeholder="Buscar IOC, Campaign, Malware..."
-      />
-    </div>
+    <div class="enterprise-header-actions">
 
-    <div class="header-right">
-      <button class="icon-button" title="Actualizar" @click="reload">
-        🔄
+      <form
+        class="enterprise-search"
+        role="search"
+        @submit.prevent="searchIoc"
+      >
+        <span>⌕</span>
+        <input
+          v-model.trim="search"
+          type="search"
+          aria-label="Buscar IOC"
+          placeholder="Buscar IOC..."
+        />
+      </form>
+
+      <button
+        type="button"
+        class="enterprise-icon-button"
+        title="Actualizar dashboard"
+        aria-label="Actualizar dashboard"
+        :disabled="dashboard.loading"
+        @click="refresh"
+      >
+        ↻
       </button>
 
-      <button class="icon-button" title="Notificaciones" disabled>
-        🔔
-      </button>
-
-      <div class="user">
-        <div class="avatar">{{ initials }}</div>
+      <div class="enterprise-user">
+        <div class="enterprise-avatar">
+          {{ initials }}
+        </div>
 
         <div>
-          <div class="user-name">{{ displayName }}</div>
-          <div class="user-role">{{ displayRole }}</div>
+          <strong>{{ displayName }}</strong>
+          <span>{{ displayRole }}</span>
         </div>
       </div>
 
       <button
-        class="logout-button"
         type="button"
+        class="logout-button"
         @click="logout"
       >
         Cerrar sesión
       </button>
+
     </div>
   </header>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useRouter } from "vue-router";
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
+import { useDashboardStore } from "@/stores/dashboard.store";
 
 const router = useRouter();
+const route = useRoute();
 const auth = useAuthStore();
+const dashboard = useDashboardStore();
+
+const search = ref("");
+
+const titles = {
+  dashboard: "Dashboard",
+  documents: "Document Center",
+  explorer: "IOC Explorer",
+  campaigns: "Campaigns",
+  malware: "Malware",
+  actors: "Threat Actors",
+  cases: "Cases",
+  reports: "Reports",
+};
+
+const pageTitle = computed(
+  () => titles[route.name] ?? "IOC Platform Enterprise"
+);
 
 const displayName = computed(
   () => auth.user?.full_name || auth.user?.username || "Usuario"
@@ -62,206 +94,192 @@ const displayRole = computed(
   () => auth.user?.roles?.join(", ") || "Sin rol"
 );
 
-const initials = computed(() => {
-  const name = displayName.value.trim();
-  return name
-    .split(/\\s+/)
+const initials = computed(() =>
+  displayName.value
+    .trim()
+    .split(/\s+/)
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() || "")
-    .join("");
-});
+    .join("")
+);
 
 function logout() {
   auth.clearSession();
   router.replace("/login");
 }
 
-function reload() {
-  window.location.reload();
+function refresh() {
+  dashboard.loadDashboard();
+}
+
+function searchIoc() {
+  if (!search.value) return;
+
+  router.push({
+    path: "/explorer",
+    query: { search: search.value },
+  });
 }
 </script>
 
 <style scoped>
-
-.header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    height:72px;
-
-    padding:0 28px;
-
-    background:#162131;
-
-    border-bottom:1px solid #223449;
-
+.enterprise-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 84px;
+  padding: 16px 28px;
+  border-bottom: 1px solid #1d3a50;
+  background: rgba(7,19,31,.92);
+  color: #eef5fa;
 }
 
-.header-left{
-
-    display:flex;
-
-    flex-direction:column;
-
+.enterprise-eyebrow {
+  display: block;
+  margin-bottom: 7px;
+  color: #61adff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .09em;
 }
 
-.page-title{
-
-    color:white;
-
-    font-size:22px;
-
-    font-weight:700;
-
+.enterprise-header h1 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: -.025em;
 }
 
-.breadcrumb{
-
-    color:#8CA0B3;
-
-    font-size:12px;
-
+.enterprise-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.header-center{
-
-    flex:1;
-
-    display:flex;
-
-    justify-content:center;
-
+.enterprise-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 310px;
+  min-height: 39px;
+  padding: 0 12px;
+  border: 1px solid #1d3a50;
+  border-radius: 9px;
+  background: rgba(10,31,47,.72);
+  color: #527990;
 }
 
-.search{
-
-    width:420px;
-
-    padding:10px 15px;
-
-    border:none;
-
-    border-radius:8px;
-
-    background:#0D1725;
-
-    color:white;
-
-    outline:none;
-
+.enterprise-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #eef5fa;
+  font-size: 11px;
 }
 
-.search::placeholder{
-
-    color:#607386;
-
+.enterprise-search input::placeholder {
+  color: #587083;
 }
 
-.header-right{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:18px;
-
+.enterprise-icon-button {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border: 1px solid #1d3a50;
+  border-radius: 9px;
+  background: rgba(12,35,52,.75);
+  color: #9ab0bf;
+  cursor: pointer;
 }
 
-.icon-button{
-
-    width:40px;
-
-    height:40px;
-
-    border:none;
-
-    border-radius:8px;
-
-    background:#0D1725;
-
-    color:white;
-
-    cursor:pointer;
-
-    transition:.2s;
-
+.enterprise-icon-button:hover {
+  background: #163249;
 }
 
-.icon-button:hover{
-
-    background:#1D2E45;
-
+.enterprise-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-left: 3px;
 }
 
-.user{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
+.enterprise-avatar {
+  display: grid;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(22,131,255,.13);
+  color: #65b1ff;
+  font-size: 11px;
+  font-weight: 850;
 }
 
-.avatar{
-
-    width:42px;
-
-    height:42px;
-
-    border-radius:50%;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    background:#3B82F6;
-
-    color:white;
-
-    font-weight:bold;
-
+.enterprise-user strong,
+.enterprise-user span {
+  display: block;
 }
 
-.user-name{
-
-    color:white;
-
-    font-size:14px;
-
-    font-weight:600;
-
+.enterprise-user strong {
+  font-size: 11px;
 }
 
-.user-role{
-
-    color:#8CA0B3;
-
-    font-size:12px;
-
+.enterprise-user span {
+  margin-top: 3px;
+  color: #8198aa;
+  font-size: 10px;
 }
-
 
 .logout-button {
-  padding: 10px 14px;
-  border: 1px solid #334155;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid #31536b;
   border-radius: 8px;
-  background: #0d1725;
-  color: #f1f5f9;
+  background: #10283a;
+  color: #eef5fa;
+  font-size: 11px;
   cursor: pointer;
 }
 
 .logout-button:hover {
-  background: #1d2e45;
+  background: #1d3e56;
 }
 
-.logout-button:focus-visible {
-  outline: 2px solid #38bdf8;
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #61adff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 1150px) {
+  .enterprise-header {
+    flex-wrap: wrap;
+  }
+
+  .enterprise-header-actions {
+    flex-wrap: wrap;
+  }
+
+  .enterprise-search {
+    width: min(310px, 100%);
+  }
+}
+
+@media (max-width: 760px) {
+  .enterprise-header {
+    padding: 18px;
+  }
+
+  .enterprise-header-actions {
+    width: 100%;
+  }
+
+  .enterprise-search {
+    flex: 1;
+    min-width: 180px;
+  }
 }
 </style>

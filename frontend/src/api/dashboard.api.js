@@ -10,6 +10,14 @@ const DashboardApi = {
     return response.data;
   },
 
+  async getGeoStats(classification = "malicious") {
+    const response = await client.get("/stats/geo", {
+      params: { classification },
+    });
+
+    return response.data;
+  },
+
   async getHealth() {
     const response = await axios.get(
       "/health",

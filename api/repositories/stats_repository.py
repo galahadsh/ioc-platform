@@ -165,3 +165,37 @@ def get_statistics() -> dict:
         "by_malware": get_iocs_by_malware(),
         "by_month": get_iocs_by_month(),
     }
+
+def get_iocs_by_country(classification: str = "all") -> list[dict]:
+    """
+    Distribución de IOC tipo IP por país GeoIP.
+
+    classification:
+      all       -> todos los IOC IP geolocalizados
+      malicious -> IOC IP analizados con detecciones maliciosas
+    """
+
+    if classification not in ("all", "malicious"):
+        raise ValueError("Clasificación no válida")
+
+    malicious_filter = """
+        AND vt_estado = 'analizado'
+        AND COALESCE(vt_malicious, 0) > 0
+    """ if classification == "malicious" else ""
+
+    query = f"""
+        SELECT
+            UPPER(TRIM(country)) AS country,
+            COUNT(*) AS total
+        FROM iocs
+        WHERE LOWER(TRIM(tipo)) = 'ip'
+          AND NULLIF(TRIM(country), '') IS NOT NULL
+          {malicious_filter}
+        GROUP BY UPPER(TRIM(country))
+        ORDER BY total DESC, country ASC
+    """
+
+    with engine.connect() as conn:
+        rows = conn.execute(text(query)).mappings().all()
+
+    return [dict(row) for row in rows]

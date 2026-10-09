@@ -29,10 +29,35 @@ export const useDashboardStore =
         byCampaign: [],
         byMalware: [],
         byMonth: [],
+        geoCountries: [],
+        geoTotal: 0,
+        geoClassification: "malicious",
+        geoLoading: false,
+        geoError: "",
         health: null,
       }),
 
       actions: {
+        async loadGeoStats(classification = "malicious") {
+          this.geoLoading = true;
+          this.geoError = "";
+
+          try {
+            const result = await DashboardApi.getGeoStats(classification);
+
+            this.geoCountries = result.countries ?? [];
+            this.geoTotal = result.total ?? 0;
+            this.geoClassification = classification;
+          } catch (error) {
+            this.geoError =
+              error.response?.data?.detail ??
+              error.message ??
+              "No se pudieron cargar los datos GeoIP.";
+          } finally {
+            this.geoLoading = false;
+          }
+        },
+
         async loadDashboard() {
           if (this.loading) {
             return;
