@@ -133,6 +133,7 @@
             v-if="mapReady && !mapError"
             class="chart geo-chart"
             :option="geoOption"
+            @click="handleGeoClick"
             autoresize
           />
 
@@ -249,6 +250,7 @@
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import VChart from "vue-echarts";
 import { use, registerMap } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -279,6 +281,7 @@ use([
 ]);
 
 const store = useDashboardStore();
+const router = useRouter();
 
 const mapReady = ref(false);
 const mapError = ref("");
@@ -337,6 +340,40 @@ const geoOption = computed(() => ({
     })),
   }],
 }));
+
+function handleGeoClick(params) {
+  if (params.componentType !== "series" || params.seriesType !== "map") {
+    return;
+  }
+
+  const country = String(params.name || "").toUpperCase();
+
+  if (!/^[A-Z]{2}$/.test(country)) {
+    return;
+  }
+
+  const selected = store.geoCountries.find(
+    (item) => String(item.country).toUpperCase() === country
+  );
+
+  if (!selected || Number(selected.total) <= 0) {
+    return;
+  }
+
+  const query = {
+    country,
+    tipo: "ip",
+  };
+
+  if (store.geoClassification === "malicious") {
+    query.estado = "malicious";
+  }
+
+  router.push({
+    name: "explorer",
+    query,
+  });
+}
 
 async function loadWorldMap() {
   try {

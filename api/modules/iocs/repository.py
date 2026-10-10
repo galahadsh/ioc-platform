@@ -124,6 +124,7 @@ class IOCOrmRepository:
         fuente: str | None = None,
         campaign: str | None = None,
         malware_family: str | None = None,
+        country: str | None = None,
         score_min: int | None = None,
         score_max: int | None = None,
         date_from: date | None = None,
@@ -188,6 +189,11 @@ class IOCOrmRepository:
                 )
             )
 
+        if country:
+            conditions.append(
+                func.upper(func.trim(IOC.country)) == country.upper()
+            )
+
         if score_min is not None:
             conditions.append(
                 func.coalesce(
@@ -239,6 +245,7 @@ class IOCOrmRepository:
         fuente: str | None = None,
         campaign: str | None = None,
         malware_family: str | None = None,
+        country: str | None = None,
         score_min: int | None = None,
         score_max: int | None = None,
         date_from: date | None = None,
@@ -253,6 +260,7 @@ class IOCOrmRepository:
             fuente=fuente,
             campaign=campaign,
             malware_family=malware_family,
+            country=country,
             score_min=score_min,
             score_max=score_max,
             date_from=date_from,

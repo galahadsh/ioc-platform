@@ -64,6 +64,16 @@
         </label>
 
         <label class="field">
+          <span>País GeoIP (ISO-2)</span>
+          <input
+            v-model.trim="draft.country"
+            maxlength="2"
+            placeholder="Ej. CN, RU, US"
+            @input="draft.country = draft.country.toUpperCase()"
+          />
+        </label>
+
+        <label class="field">
           <span>Fuente</span>
           <input
             v-model.trim="draft.fuente"
@@ -249,6 +259,7 @@ const emptyFilters = () => ({
   search: "",
   tipo: "",
   estado: "",
+  country: "",
   fuente: "",
   campaign: "",
   malware_family: "",
@@ -270,31 +281,43 @@ function clearFilters() {
   applyFilters();
 }
 
-function syncHeaderSearch(value) {
-  if (typeof value !== "string") return;
+function syncRouteFilters() {
+  const query = route.query;
 
-  Object.assign(draft, emptyFilters(), { search: value });
+  const hasFilters = [
+    "search", "country", "tipo", "estado"
+  ].some((key) => typeof query[key] === "string");
+
+  if (!hasFilters) {
+    if (!store.loaded) {
+      store.loadIOCs();
+    } else {
+      Object.assign(draft, emptyFilters(), store.filters);
+    }
+    return;
+  }
+
+  const next = emptyFilters();
+
+  for (const key of ["search", "country", "tipo", "estado"]) {
+    if (typeof query[key] === "string") {
+      next[key] = query[key];
+    }
+  }
+
+  next.country = next.country.toUpperCase();
+
+  Object.assign(draft, next);
   applyFilters();
 }
 
-onMounted(() => {
-  if (typeof route.query.search === "string") {
-    syncHeaderSearch(route.query.search);
-  } else if (!store.loaded) {
-    store.loadIOCs();
-  } else {
-    Object.assign(draft, emptyFilters(), store.filters);
-  }
-});
+onMounted(syncRouteFilters);
 
 watch(
-  () => route.query.search,
-  (value, previousValue) => {
-    if (value !== previousValue && typeof value === "string") {
-      syncHeaderSearch(value);
-    }
-  }
+  () => route.fullPath,
+  () => syncRouteFilters()
 );
+
 </script>
 
 <style scoped>

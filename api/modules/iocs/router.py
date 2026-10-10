@@ -49,6 +49,7 @@ def list_iocs(
     fuente: str | None = None,
     campaign: str | None = None,
     malware_family: str | None = None,
+    country: str | None = Query(default=None, pattern=r"^[A-Za-z]{2}$"),
     score_min: Annotated[
         int | None,
         Query(ge=0),
@@ -113,6 +114,7 @@ def list_iocs(
         fuente=fuente,
         campaign=campaign,
         malware_family=malware_family,
+        country=country,
         score_min=score_min,
         score_max=score_max,
         date_from=date_from,

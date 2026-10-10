@@ -1,4 +1,4 @@
-import ChangePasswordView from "@/views/ChangePasswordView.vue";
+
 
 
 import {
@@ -6,20 +6,16 @@ import {
   createWebHistory,
 } from "vue-router";
 
-import LoginView from "@/views/LoginView.vue";
+
 import { useAuthStore } from "@/stores/auth.store";
 
-import DefaultLayout from
-  "@/layouts/DefaultLayout.vue";
 
-import DashboardView from
-  "@/views/DashboardView.vue";
 
-import ExplorerView from
-  "@/views/ExplorerView.vue";
 
-import DocumentsView from
-  "@/features/documents/views/DocumentsView.vue";
+
+
+
+
 
 const EmptyView = (title) => ({
   name: `${title.replaceAll(" ", "")}View`,
@@ -43,36 +39,36 @@ const router = createRouter({
     {
       path: "/change-password",
       name: "change-password",
-      component: ChangePasswordView,
+      component: () => import("@/views/ChangePasswordView.vue"),
     },
 
 
     {
       path: "/login",
       name: "login",
-      component: LoginView,
+      component: () => import("@/views/LoginView.vue"),
       meta: { public: true },
     },
 
     {
       path: "/",
-      component: DefaultLayout,
+      component: () => import("@/layouts/DefaultLayout.vue"),
 
       children: [
         {
           path: "",
           name: "dashboard",
-          component: DashboardView,
+          component: () => import("@/views/DashboardView.vue"),
         },
         {
           path: "documents",
           name: "documents",
-          component: DocumentsView,
+          component: () => import("@/features/documents/views/DocumentsView.vue"),
         },
         {
           path: "explorer",
           name: "explorer",
-          component: ExplorerView,
+          component: () => import("@/views/ExplorerView.vue"),
         },
         {
           path: "campaigns",

@@ -15,6 +15,7 @@ class IOC(Base):
     tipo: Mapped[str] = mapped_column(String, nullable=False)
     valor: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     fuente: Mapped[str | None] = mapped_column(String, nullable=True)
+    country: Mapped[str | None] = mapped_column(String, nullable=True)
     proveedor_reputacion: Mapped[str | None] = mapped_column(
         String,
         nullable=True,

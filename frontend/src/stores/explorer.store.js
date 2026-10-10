@@ -35,6 +35,7 @@ export const useExplorerStore =
           search: "",
           tipo: "",
           estado: "",
+          country: "",
           fuente: "",
           campaign: "",
           malware_family: "",
